@@ -34,18 +34,21 @@ form.addEventListener('submit', async (e) => {
             if (s.endTime && currentTime > s.endTime) throw `Check-in closed at ${s.endTime}`;
         }
 
-        // 2. Find Staff by Mobile
+        // 2. Find Staff by Mobile (treat missing "active" as active)
         const staffSnapshot = await db.collection('users').doc(ownerUid)
             .collection('staff')
             .where('mobile', '==', mobile)
-            .where('active', '==', true)
             .get();
 
         if (staffSnapshot.empty) {
             throw "Staff not found or inactive. Check mobile number.";
         }
 
-        const staffDoc = staffSnapshot.docs[0];
+        const staffDoc = staffSnapshot.docs.find(d => d.data().active !== false);
+        if (!staffDoc) {
+            throw "Staff not found or inactive. Check mobile number.";
+        }
+
         const staff = staffDoc.data();
 
         // 3. Check if already marked today
@@ -72,6 +75,9 @@ form.addEventListener('submit', async (e) => {
         });
 
         showMessage('success', `Welcome, ${staff.name}! Attendance marked.`);
+        setTimeout(() => {
+            window.confirm('Attendance marked successfully. You can close this screen now.');
+        }, 50);
         form.reset();
 
     } catch (error) {
