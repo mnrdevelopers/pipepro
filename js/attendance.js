@@ -15,8 +15,7 @@ if (!ownerUid) {
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!ownerUid) return;
-    const mobile = document.getElementById('mobile').value.trim().replace(/\D/g, '');
+    const mobile = document.getElementById('mobile').value.trim();
     
     if (!mobile) return;
     
@@ -34,50 +33,44 @@ form.addEventListener('submit', async (e) => {
             if (s.endTime && currentTime > s.endTime) throw `Check-in closed at ${s.endTime}`;
         }
 
-        // 2. Find Staff by Mobile (treat missing "active" as active)
+        // 2. Find Staff by Mobile
         const staffSnapshot = await db.collection('users').doc(ownerUid)
             .collection('staff')
             .where('mobile', '==', mobile)
+            .where('active', '==', true)
             .get();
 
         if (staffSnapshot.empty) {
             throw "Staff not found or inactive. Check mobile number.";
         }
 
-        const staffDoc = staffSnapshot.docs.find(d => d.data().active !== false);
-        if (!staffDoc) {
-            throw "Staff not found or inactive. Check mobile number.";
-        }
-
+        const staffDoc = staffSnapshot.docs[0];
         const staff = staffDoc.data();
 
-        // 3. Check if already marked today
+        // 3. Mark Attendance
+        // We use a deterministic ID (staffId_date) to prevent duplicates without needing read permissions.
         const todayStr = new Date().toISOString().split('T')[0];
-        const attSnapshot = await db.collection('users').doc(ownerUid)
-            .collection('attendance')
-            .where('staffId', '==', staffDoc.id)
-            .where('dateString', '==', todayStr)
-            .get();
+        const docId = `${staffDoc.id}_${todayStr}`;
 
-        if (!attSnapshot.empty) {
-            throw "Attendance already marked for today.";
+        try {
+            await db.collection('users').doc(ownerUid).collection('attendance').doc(docId).set({
+                staffId: staffDoc.id,
+                staffName: staff.name,
+                role: staff.role,
+                wageEarned: staff.dailyWage,
+                timestamp: new Date(),
+                dateString: todayStr,
+                status: 'Present'
+            });
+        } catch (err) {
+            // If permission denied, it likely means the document already exists (update denied for public users)
+            if (err.code === 'permission-denied') {
+                throw "Attendance already marked for today.";
+            }
+            throw err;
         }
 
-        // 4. Mark Attendance
-        await db.collection('users').doc(ownerUid).collection('attendance').add({
-            staffId: staffDoc.id,
-            staffName: staff.name,
-            role: staff.role,
-            wageEarned: staff.dailyWage,
-            timestamp: new Date(),
-            dateString: todayStr,
-            status: 'Present'
-        });
-
         showMessage('success', `Welcome, ${staff.name}! Attendance marked.`);
-        setTimeout(() => {
-            window.confirm('Attendance marked successfully. You can close this screen now.');
-        }, 50);
         form.reset();
 
     } catch (error) {
