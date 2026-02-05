@@ -17,10 +17,10 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="logo.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
+                <img src="logo.png" alt="Logo" class="navbar-logo">
                 <span class="fw-bold">PipePro</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -29,10 +29,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                    <li class="nav-item"><a class="btn btn-outline-primary ms-2" href="login.html">Login</a></li>
-                    <li class="nav-item"><a class="btn btn-primary ms-2 text-white" href="register.html">Get Started</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="btn btn-gold-outline btn-nav ms-2" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="btn btn-gold btn-nav ms-2" href="register.html">Get Started</a></li>
                 </ul>
             </div>
         </div>
@@ -40,34 +40,56 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
+        <canvas id="hero-particles"></canvas>
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4 text-dark">Manage Your Manufacturing Business Like a Pro</h1>
-                    <p class="lead mb-4">Streamline your septic tank and drainage pipes business with our comprehensive management platform. Track inventory, manage customers, handle projects, and grow your business efficiently.</p>
-                    <div class="d-flex gap-3">
-                        <a href="register.html" class="btn btn-primary btn-lg px-4">
-                            <i class="fas fa-rocket me-2"></i>Get Started Free
+                    <div class="hero-badges">
+                        <span class="hero-badge"><i class="fas fa-bolt me-1"></i>Fast setup</span>
+                        <span class="hero-badge"><i class="fas fa-shield-alt me-1"></i>Secure data</span>
+                        <span class="hero-badge"><i class="fas fa-chart-line me-1"></i>Grow revenue</span>
+                    </div>
+                    <h1 class="display-4 fw-bold mb-4 text-gradient-gold">Run Your Pipes Manufacturing Business Like a Pro</h1>
+                    <p class="lead mb-4 text-silver">Centralize inventory, customers, projects, and billing in one beautiful dashboard. Built for septic tank and drainage pipe manufacturers who want clarity and control.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="register.html" class="btn btn-hero-primary btn-lg px-4">
+                            <i class="fas fa-rocket me-2"></i>Get Started
                         </a>
-                        <a href="#features" class="btn btn-outline-secondary btn-lg px-4">
-                            <i class="fas fa-play-circle me-2"></i>Learn More
+                        <a href="#features" class="btn btn-hero-secondary btn-lg px-4">
+                            <i class="fas fa-play-circle me-2"></i>See Features
                         </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <strong>Quick</strong>
+                            <span>Get set up fast</span>
+                        </div>
+                        <div class="hero-stat">
+                            <strong>All-in-One</strong>
+                            <span>Inventory + CRM + Projects</span>
+                        </div>
+                        <div class="hero-stat">
+                            <strong>Smart</strong>
+                            <span>Built for manufacturers</span>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="Pipes Business Management" class="img-fluid rounded shadow">
+                    <div class="hero-image-wrapper">
+                        <img src="hero.png" 
+                             alt="Pipes Business Management" class="img-fluid rounded shadow-lg border-gold">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-5 bg-white">
+    <section id="features" class="py-5">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Powerful Features</h2>
-                <p class="lead">Everything you need to manage your pipes business efficiently</p>
+                <h2 class="display-5 fw-bold text-gold">Powerful Features</h2>
+                <p class="lead text-silver">Everything you need to manage your pipes business efficiently</p>
             </div>
             <div class="row g-4">
                 <div class="col-md-4">
@@ -76,8 +98,8 @@
                             <div class="feature-icon mb-3">
                                 <i class="fas fa-boxes fa-2x"></i>
                             </div>
-                            <h4 class="card-title">Inventory Management</h4>
-                            <p class="card-text">Track pipes, fittings, septic tanks, and all materials with real-time stock updates.</p>
+                            <h4 class="card-title text-gold">Inventory Management</h4>
+                            <p class="card-text text-silver">Track pipes, fittings, septic tanks, and all materials with real-time stock updates.</p>
                         </div>
                     </div>
                 </div>
@@ -87,8 +109,8 @@
                             <div class="feature-icon mb-3">
                                 <i class="fas fa-users fa-2x"></i>
                             </div>
-                            <h4 class="card-title">Customer CRM</h4>
-                            <p class="card-text">Manage client information, project history, and communication all in one place.</p>
+                            <h4 class="card-title text-gold">Customer CRM</h4>
+                            <p class="card-text text-silver">Manage client information, project history, and communication all in one place.</p>
                         </div>
                     </div>
                 </div>
@@ -98,8 +120,8 @@
                             <div class="feature-icon mb-3">
                                 <i class="fas fa-project-diagram fa-2x"></i>
                             </div>
-                            <h4 class="card-title">Project Tracking</h4>
-                            <p class="card-text">Monitor ongoing projects, installations, and maintenance schedules.</p>
+                            <h4 class="card-title text-gold">Project Tracking</h4>
+                            <p class="card-text text-silver">Monitor ongoing projects, installations, and maintenance schedules.</p>
                         </div>
                     </div>
                 </div>
@@ -108,41 +130,52 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-dark-accent">
         <div class="container text-center py-5">
-            <h2 class="display-5 fw-bold mb-4 text-dark">Ready to Transform Your Business?</h2>
-            <p class="lead mb-5 text-muted">Join hundreds of manufacturers who trust PipePro for their daily operations.</p>
-            <a href="register.html" class="btn btn-primary btn-lg px-5 py-3 shadow-lg">
-                Start Your Free Trial <i class="fas fa-arrow-right ms-2"></i>
+            <h2 class="display-5 fw-bold mb-4 text-gold">Ready to Transform Your Business?</h2>
+            <p class="lead mb-5 text-silver">Join hundreds of manufacturers who trust PipePro for their daily operations.</p>
+            <a href="register.html" class="btn btn-gold btn-lg px-5 py-3 shadow-lg">
+                Get Started <i class="fas fa-arrow-right ms-2"></i>
             </a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-white text-dark py-5">
+    <footer class="bg-black text-silver py-5 border-top border-secondary">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5 class="fw-bold text-primary mb-3"><i class="fas fa-pipe-circle-notch me-2"></i>PipePro</h5>
-                    <p class="text-muted">Professional business management solution for pipes, septic tanks, and drainage systems businesses.</p>
+            <div class="row footer-top">
+                <div class="col-md-5">
+                    <div class="footer-brand">
+                        <img src="logo.png" alt="PipePro Logo">
+                        <div>
+                            <div class="footer-title">PipePro</div>
+                            <div class="text-silver opacity-75 small">Business Ops Suite</div>
+                        </div>
+                    </div>
+                    <p class="text-silver opacity-75">Professional management software for septic tanks, drainage pipes, and fabrication businesses.</p>
                 </div>
                 <div class="col-md-3">
-                    <h6 class="fw-bold mb-3">Quick Links</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#features" class="text-muted">Features</a></li>
-                        <li class="mb-2"><a href="#about" class="text-muted">About Us</a></li>
-                        <li class="mb-2"><a href="#contact" class="text-muted">Contact</a></li>
-                    </ul>
+                    <h6 class="fw-bold mb-3 text-gold">Product</h6>
+                    <div class="footer-links">
+                        <a href="#features" class="hover-gold">Features</a>
+                        <a href="register.html" class="hover-gold">Get Started</a>
+                        <a href="login.html" class="hover-gold">Sign In</a>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <h6 class="fw-bold mb-3">Contact</h6>
-                    <p class="text-muted mb-2"><i class="fas fa-envelope me-2 text-primary"></i>mnrdeveloper11@gmail.com</p>
-                    <p class="text-muted"><i class="fas fa-phone me-2 text-primary"></i>+917416006394</p>
+                <div class="col-md-4">
+                    <h6 class="fw-bold mb-3 text-gold">Contact</h6>
+                    <div class="text-silver mb-2"><i class="fas fa-envelope me-2 text-gold"></i>mnrdeveloper11@gmail.com</div>
+                    <div class="text-silver mb-2"><i class="fas fa-phone me-2 text-gold"></i>+917416006394</div>
+                    <div class="text-silver"><i class="fas fa-clock me-2 text-gold"></i>Mon-Sat, 9AM-6PM</div>
                 </div>
             </div>
-            <hr class="my-4">
-            <div class="text-center text-muted">
-                <p>&copy; 2026 PipePro. All rights reserved.</p>
+            <div class="footer-bottom">
+                <div>&copy; 2026 PipePro. All rights reserved.</div>
+                <div class="d-flex gap-3">
+                    <span class="text-silver opacity-75">Privacy</span>
+                    <span class="text-silver opacity-75">Terms</span>
+                    <span class="text-silver opacity-75">Support</span>
+                </div>
             </div>
         </div>
     </footer>
@@ -155,5 +188,55 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/auth.js"></script>
+    
+    <!-- Particle Animation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('hero-particles');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 1;
+                    this.alpha = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(212, 175, 55, ${this.alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            }
+            
+            window.addEventListener('resize', resize);
+            resize();
+            for(let i=0; i<60; i++) particles.push(new Particle());
+            animate();
+        });
+    </script>
 </body>
 </html>
