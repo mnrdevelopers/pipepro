@@ -1,0 +1,193 @@
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --success-color: #4cc9f0;
+    --info-color: #4895ef;
+    --warning-color: #f72585;
+    --danger-color: #e63946;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --sidebar-width: 260px;
+    --header-height: 70px;
+    --card-radius: 16px;
+    --card-shadow: 0 10px 30px 0 rgba(0,0,0,0.05);
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    background-color: #f3f5f9;
+    color: #4a5568;
+    overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+    height: var(--header-height);
+    background: #fff;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0; /* Initially full width, JS/CSS will adjust if needed, but usually fixed top covers all */
+    z-index: 1030;
+    padding: 0 1.5rem;
+    transition: var(--transition-speed);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--primary-color) !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: var(--header-height);
+    bottom: 0;
+    left: 0;
+    z-index: 1020;
+    width: var(--sidebar-width);
+    background: #fff;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.04);
+    padding: 1.5rem 1rem;
+    transition: var(--transition-speed);
+    overflow-y: auto;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #718096;
+    padding: 0.9rem 1.2rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+    color: var(--primary-color);
+    background-color: rgba(67, 97, 238, 0.05);
+    transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+    color: #fff;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.35);
+}
+
+.sidebar .nav-link i {
+    width: 24px;
+    text-align: center;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+/* Main Content */
+main {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    margin-top: var(--header-height);
+    transition: var(--transition-speed);
+    min-height: calc(100vh - var(--header-height));
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Stats Cards */
+.border-start-primary { border-left: 5px solid var(--primary-color) !important; }
+.border-start-success { border-left: 5px solid var(--success-color) !important; }
+.border-start-info { border-left: 5px solid var(--info-color) !important; }
+.border-start-warning { border-left: 5px solid var(--warning-color) !important; }
+
+.text-gray-300 { color: #e2e8f0 !important; }
+.text-gray-800 { color: #2d3748 !important; }
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+/* Charts */
+.chart-area {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+/* Utilities */
+.avatar-sm {
+    width: 36px;
+    height: 36px;
+    background-color: #e2e8f0;
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 991.98px) {
+    .sidebar {
+        left: calc(-1 * var(--sidebar-width));
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+    
+    main {
+        margin-left: 0;
+        padding: 1.5rem 1rem;
+    }
+    
+    /* Overlay */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(3px);
+        z-index: 1010;
+    }
+    
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
