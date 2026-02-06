@@ -4,11 +4,27 @@ import { showAlert } from './auth.js';
 
 const settingsForm = document.getElementById('settingsForm');
 let pendingFiles = {};
+const backupToDriveBtn = document.getElementById('backupToDriveBtn');
+const backupStatus = document.getElementById('backupStatus');
+const restoreFromDriveBtn = document.getElementById('restoreFromDriveBtn');
+const restoreStatus = document.getElementById('restoreStatus');
+const restoreBackupTable = document.getElementById('restoreBackupTable');
+
+const DRIVE_CLIENT_ID = '519698901834-t2q9fhq19tm6imi650k5f7f4h83jmgue.apps.googleusercontent.com';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FOLDER_NAME = 'PipePro Backups';
 
 document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
     loadSettings();
     setupFileListeners();
+
+    if (backupToDriveBtn) {
+        backupToDriveBtn.addEventListener('click', backupToGoogleDrive);
+    }
+    if (restoreFromDriveBtn) {
+        restoreFromDriveBtn.addEventListener('click', openRestoreModal);
+    }
     
     if (settingsForm) {
         settingsForm.addEventListener('submit', saveSettings);
@@ -90,10 +106,30 @@ function showExistingImage(type, url) {
     }
 }
 
-window.removeSettingImage = (type) => {
+window.removeSettingImage = async (type) => {
     document.getElementById(`${type}Url`).value = '';
     document.getElementById(`${type}Preview`).innerHTML = '';
     document.getElementById(type === 'logo' ? 'companyLogo' : 'companySignature').value = '';
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+    const businessId = user.businessId || user.uid;
+    const field = type === 'logo' ? 'logoUrl' : 'signatureUrl';
+
+    try {
+        await db.collection('users')
+            .doc(businessId)
+            .collection('settings')
+            .doc('business')
+            .update({
+                [field]: '',
+                updatedAt: new Date()
+            });
+        showAlert('success', 'Image removed');
+    } catch (e) {
+        console.error(e);
+        showAlert('danger', 'Failed to remove image');
+    }
 };
 
 async function saveSettings(e) {
@@ -251,4 +287,327 @@ async function uploadToImgBB(file, apiKey) {
         return data.data.url;
     }
     throw new Error(data.error ? data.error.message : 'Upload failed');
+}
+
+function setBackupStatus(message, type = 'muted') {
+    if (!backupStatus) return;
+    backupStatus.className = `small text-${type}`;
+    backupStatus.textContent = message;
+}
+
+function setRestoreStatus(message, type = 'muted') {
+    if (!restoreStatus) return;
+    restoreStatus.className = `small text-${type}`;
+    restoreStatus.textContent = message;
+}
+
+function getDriveAccessToken() {
+    return new Promise((resolve, reject) => {
+        if (!window.google || !google.accounts || !google.accounts.oauth2) {
+            reject(new Error('Google Identity Services not loaded.'));
+            return;
+        }
+
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: DRIVE_CLIENT_ID,
+            scope: DRIVE_SCOPE,
+            callback: (response) => {
+                if (response && response.access_token) {
+                    resolve(response.access_token);
+                } else {
+                    reject(new Error('Failed to get access token.'));
+                }
+            }
+        });
+
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+    });
+}
+
+function sanitizeForJson(value) {
+    if (value === null || value === undefined) return value;
+    if (value.toDate && typeof value.toDate === 'function') {
+        return value.toDate().toISOString();
+    }
+    if (Array.isArray(value)) {
+        return value.map(sanitizeForJson);
+    }
+    if (typeof value === 'object') {
+        const out = {};
+        Object.keys(value).forEach((k) => {
+            out[k] = sanitizeForJson(value[k]);
+        });
+        return out;
+    }
+    return value;
+}
+
+async function fetchCollectionData(businessId, name) {
+    const snapshot = await db.collection('users').doc(businessId).collection(name).get();
+    const rows = [];
+    snapshot.forEach(doc => {
+        rows.push({
+            id: doc.id,
+            ...sanitizeForJson(doc.data())
+        });
+    });
+    return rows;
+}
+
+async function getOrCreateDriveFolder(accessToken) {
+    const query = encodeURIComponent(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    const listUrl = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`;
+    const listRes = await fetch(listUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const listData = await listRes.json();
+    if (listData.files && listData.files.length > 0) {
+        return listData.files[0].id;
+    }
+
+    const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: DRIVE_FOLDER_NAME,
+            mimeType: 'application/vnd.google-apps.folder'
+        })
+    });
+    const folder = await createRes.json();
+    return folder.id;
+}
+
+async function listDriveBackups(accessToken, folderId) {
+    const query = encodeURIComponent(`'${folderId}' in parents and mimeType='application/json' and trashed=false`);
+    const listUrl = `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name,size,createdTime)&orderBy=createdTime desc`;
+    const res = await fetch(listUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const data = await res.json();
+    return data.files || [];
+}
+
+async function downloadDriveFile(accessToken, fileId) {
+    const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+    if (!res.ok) throw new Error('Failed to download backup.');
+    return res.json();
+}
+
+function formatBytes(bytes) {
+    if (!bytes) return '-';
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+}
+
+async function openRestoreModal() {
+    if (!restoreBackupTable) return;
+    setRestoreStatus('Loading backups...', 'muted');
+    const tbody = restoreBackupTable.querySelector('tbody');
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Loading backups...</td></tr>';
+
+    try {
+        const accessToken = await getDriveAccessToken();
+        const folderId = await getOrCreateDriveFolder(accessToken);
+        const files = await listDriveBackups(accessToken, folderId);
+
+        if (!files.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No backups found.</td></tr>';
+            setRestoreStatus('No backups available.', 'muted');
+        } else {
+            tbody.innerHTML = '';
+            files.forEach(file => {
+                const created = file.createdTime ? new Date(file.createdTime).toLocaleString() : '-';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${file.name}</td>
+                        <td>${formatBytes(Number(file.size))}</td>
+                        <td>${created}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" data-file-id="${file.id}">
+                                Restore
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        new bootstrap.Modal(document.getElementById('restoreBackupModal')).show();
+    } catch (e) {
+        console.error(e);
+        setRestoreStatus('Failed to load backups.', 'danger');
+        showAlert('danger', 'Failed to load backups.');
+    }
+}
+
+async function clearCollection(businessId, name) {
+    const snap = await db.collection('users').doc(businessId).collection(name).get();
+    const batchSize = 400;
+    let batch = db.batch();
+    let count = 0;
+
+    for (const doc of snap.docs) {
+        batch.delete(doc.ref);
+        count++;
+        if (count >= batchSize) {
+            await batch.commit();
+            batch = db.batch();
+            count = 0;
+        }
+    }
+    if (count > 0) await batch.commit();
+}
+
+async function restoreCollection(businessId, name, rows) {
+    const batchSize = 400;
+    let batch = db.batch();
+    let count = 0;
+
+    for (const row of rows) {
+        const { id, ...data } = row;
+        const ref = db.collection('users').doc(businessId).collection(name).doc(id || undefined);
+        batch.set(ref, data);
+        count++;
+        if (count >= batchSize) {
+            await batch.commit();
+            batch = db.batch();
+            count = 0;
+        }
+    }
+    if (count > 0) await batch.commit();
+}
+
+async function restoreFromBackup(fileId) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+    const businessId = user.businessId || user.uid;
+
+    window.showConfirm(
+        'Restore Backup',
+        'This will overwrite current data. Continue?',
+        async () => {
+            try {
+                setRestoreStatus('Restoring backup...', 'muted');
+                const accessToken = await getDriveAccessToken();
+                const backup = await downloadDriveFile(accessToken, fileId);
+
+                if (!backup || !backup.collections) {
+                    throw new Error('Invalid backup format.');
+                }
+
+                const collectionNames = Object.keys(backup.collections);
+                for (const name of collectionNames) {
+                    await clearCollection(businessId, name);
+                    await restoreCollection(businessId, name, backup.collections[name] || []);
+                }
+
+                setRestoreStatus('Restore completed successfully.', 'success');
+                showAlert('success', 'Restore completed.');
+            } catch (e) {
+                console.error(e);
+                setRestoreStatus('Restore failed.', 'danger');
+                showAlert('danger', 'Restore failed.');
+            }
+        }
+    );
+}
+
+if (restoreBackupTable) {
+    restoreBackupTable.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-file-id]');
+        if (!btn) return;
+        const fileId = btn.getAttribute('data-file-id');
+        if (fileId) restoreFromBackup(fileId);
+    });
+}
+
+async function uploadJsonToDrive(accessToken, folderId, filename, data) {
+    const metadata = {
+        name: filename,
+        mimeType: 'application/json',
+        parents: [folderId]
+    };
+
+    const boundary = '-------314159265358979323846';
+    const delimiter = `\r\n--${boundary}\r\n`;
+    const closeDelimiter = `\r\n--${boundary}--`;
+
+    const body =
+        delimiter +
+        'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+        JSON.stringify(metadata) +
+        delimiter +
+        'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+        JSON.stringify(data) +
+        closeDelimiter;
+
+    const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': `multipart/related; boundary=${boundary}`
+        },
+        body
+    });
+
+    return uploadRes.json();
+}
+
+async function backupToGoogleDrive() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+    const businessId = user.businessId || user.uid;
+
+    if (backupToDriveBtn) backupToDriveBtn.disabled = true;
+    setBackupStatus('Preparing backup...', 'muted');
+
+    try {
+        const accessToken = await getDriveAccessToken();
+        setBackupStatus('Collecting data...', 'muted');
+
+        const collections = [
+            'transactions',
+            'inventory',
+            'customers',
+            'suppliers',
+            'projects',
+            'purchases',
+            'vehicle_expenses',
+            'vehicles',
+            'staff',
+            'attendance',
+            'production_runs',
+            'recipes',
+            'settings',
+            'team',
+            'challans'
+        ];
+
+        const data = {
+            businessId,
+            createdAt: new Date().toISOString(),
+            collections: {}
+        };
+
+        for (const name of collections) {
+            data.collections[name] = await fetchCollectionData(businessId, name);
+        }
+
+        const folderId = await getOrCreateDriveFolder(accessToken);
+        const filename = `pipepro_backup_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+        await uploadJsonToDrive(accessToken, folderId, filename, data);
+
+        setBackupStatus('Backup completed and saved to Google Drive.', 'success');
+    } catch (error) {
+        console.error('Backup failed:', error);
+        setBackupStatus('Backup failed. Please try again.', 'danger');
+        showAlert('danger', 'Backup failed.');
+    } finally {
+        if (backupToDriveBtn) backupToDriveBtn.disabled = false;
+    }
 }
