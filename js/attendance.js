@@ -15,7 +15,7 @@ if (!ownerUid) {
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const mobile = document.getElementById('mobile').value.trim();
+    const mobile = normalizeMobile(document.getElementById('mobile').value);
     
     if (!mobile) return;
     
@@ -31,6 +31,31 @@ form.addEventListener('submit', async (e) => {
             
             if (s.startTime && currentTime < s.startTime) throw `Check-in not allowed before ${s.startTime}`;
             if (s.endTime && currentTime > s.endTime) throw `Check-in closed at ${s.endTime}`;
+
+            // 1b. Check Location Restrictions (if configured)
+            const allowedLat = parseFloat(s.allowedLat);
+            const allowedLng = parseFloat(s.allowedLng);
+            const allowedRadius = parseFloat(s.allowedRadius);
+            let locationCapture = null;
+            if (isValidNumber(allowedLat) && isValidNumber(allowedLng)) {
+                const radius = isValidNumber(allowedRadius) ? allowedRadius : 200;
+                const position = await getCurrentPosition();
+                const distance = getDistanceMeters(
+                    { lat: allowedLat, lng: allowedLng },
+                    { lat: position.coords.latitude, lng: position.coords.longitude }
+                );
+
+                if (distance > radius) {
+                    throw `Wrong location. You are ${Math.round(distance)}m away (allowed ${radius}m).`;
+                }
+                locationCapture = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    accuracy: position.coords.accuracy ?? null,
+                    distanceMeters: Math.round(distance),
+                    verifiedAt: new Date()
+                };
+            }
         }
 
         // 2. Find Staff by Mobile
@@ -60,7 +85,8 @@ form.addEventListener('submit', async (e) => {
                 wageEarned: staff.dailyWage,
                 timestamp: new Date(),
                 dateString: todayStr,
-                status: 'Present'
+                status: 'Present',
+                location: locationCapture
             });
         } catch (err) {
             // If permission denied, it likely means the document already exists (update denied for public users)
@@ -70,7 +96,7 @@ form.addEventListener('submit', async (e) => {
             throw err;
         }
 
-        showMessage('success', `Welcome, ${staff.name}! Attendance marked.`);
+        showMessage('success', `Welcome, ${staff.name}! Attendance marked. Location verified.`);
         form.reset();
 
     } catch (error) {
@@ -95,4 +121,37 @@ function setLoading(isLoading) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Mark Present';
     }
+}
+
+function normalizeMobile(value) {
+    return (value || '').replace(/\D/g, '');
+}
+
+function isValidNumber(val) {
+    return typeof val === 'number' && !Number.isNaN(val);
+}
+
+function getCurrentPosition() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error('Geolocation is not supported in this browser.'));
+            return;
+        }
+        navigator.geolocation.getCurrentPosition(resolve, (err) => {
+            reject(new Error('Location permission is required to mark attendance.'));
+        }, { enableHighAccuracy: true, timeout: 10000 });
+    });
+}
+
+function getDistanceMeters(a, b) {
+    const toRad = (deg) => (deg * Math.PI) / 180;
+    const R = 6371000;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const lat1 = toRad(a.lat);
+    const lat2 = toRad(b.lat);
+    const sinDLat = Math.sin(dLat / 2);
+    const sinDLng = Math.sin(dLng / 2);
+    const h = sinDLat * sinDLat + Math.cos(lat1) * Math.cos(lat2) * sinDLng * sinDLng;
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
 }
