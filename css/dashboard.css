@@ -426,6 +426,65 @@ main {
     box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
 }
 
+/* Profit & Loss */
+.pl-card {
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.pl-card .card-body {
+    padding: 1.4rem 1.5rem;
+}
+
+.pl-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.pl-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0.35rem 0;
+}
+
+.pl-sub {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.pl-income { border-left: 5px solid #16a34a; }
+.pl-expense { border-left: 5px solid #ef4444; }
+.pl-profit { border-left: 5px solid #0ea5e9; }
+.pl-margin { border-left: 5px solid #f59e0b; }
+
+.pl-filters {
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.pl-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pl-pill-income { background: rgba(34, 197, 94, 0.12); color: #16a34a; }
+.pl-pill-expense { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
+.pl-pill-neutral { background: rgba(148, 163, 184, 0.15); color: #475569; }
+
 /* Utilities */
 .avatar-sm {
     width: 36px;
