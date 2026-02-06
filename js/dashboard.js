@@ -764,7 +764,9 @@ window.deleteTeamMember = async (id) => {
             const user = JSON.parse(localStorage.getItem('user'));
             // Delete from Owner's team list
             await db.collection('users').doc(user.uid).collection('team').doc(id).delete();
-            // Note: This doesn't delete from Auth, which requires Admin SDK. But deleting the doc breaks their app access logic or we can add a check.
+            // Also remove the team member profile doc
+            await db.collection('users').doc(id).delete();
+            // Note: This doesn't delete from Auth, which requires Admin SDK.
             loadTeamMembers();
         } catch(e) { console.error(e); }
     });
