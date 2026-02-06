@@ -102,7 +102,8 @@ async function saveSettings(e) {
     const businessId = user.businessId || user.uid;
     
     const upiId = document.getElementById('companyUpiId') ? document.getElementById('companyUpiId').value.trim() : '';
-    if (upiId && !/^[\w.-]+@[\w.-]+$/.test(upiId)) {
+    // Validate UPI ID format (e.g. username@bank, min length check)
+    if (upiId && !/^[a-zA-Z0-9.\-_]{2,}@[a-zA-Z]{2,}$/.test(upiId)) {
         showAlert('warning', 'Invalid UPI ID format. Please use format like name@bank');
         return;
     }
