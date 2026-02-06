@@ -136,6 +136,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="profit-loss">
+                                <i class="fas fa-scale-balanced me-2"></i>
+                                Profit & Loss
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#" data-section="vehicles">
                                 <i class="fas fa-truck me-2"></i>
                                 Vehicles
@@ -1033,6 +1039,119 @@
                     </div>
                 </div>
 
+                <!-- SECTION: PROFIT & LOSS -->
+                <div id="section-profit-loss" class="main-section d-none">
+                    <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                        <h1 class="h2">Profit &amp; Loss</h1>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-outline-primary" id="refreshProfitLossBtn">
+                                <i class="fas fa-rotate me-1"></i> Refresh
+                            </button>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-download me-1"></i> Export
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><button class="dropdown-item" id="exportProfitLossPdfBtn"><i class="fas fa-file-pdf me-2"></i>PDF</button></li>
+                                    <li><button class="dropdown-item" id="exportProfitLossCsvBtn"><i class="fas fa-file-csv me-2"></i>CSV</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card pl-card pl-income">
+                                <div class="card-body">
+                                    <div class="pl-label">Total Income</div>
+                                    <div class="pl-value" id="plTotalIncome">₹0</div>
+                                    <div class="pl-sub">Invoices + Payments</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card pl-card pl-expense">
+                                <div class="card-body">
+                                    <div class="pl-label">Total Expenses</div>
+                                    <div class="pl-value" id="plTotalExpenses">₹0</div>
+                                    <div class="pl-sub">Purchases + Supplier + Vehicle</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card pl-card pl-profit">
+                                <div class="card-body">
+                                    <div class="pl-label">Net Profit</div>
+                                    <div class="pl-value" id="plNetProfit">₹0</div>
+                                    <div class="pl-sub">Income - Expenses</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card pl-card pl-margin">
+                                <div class="card-body">
+                                    <div class="pl-label">Profit Margin</div>
+                                    <div class="pl-value" id="plProfitMargin">0%</div>
+                                    <div class="pl-sub">Net / Income</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card pl-filters mb-4">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-3">
+                                    <label class="form-label">From</label>
+                                    <input type="date" class="form-control" id="plStartDate">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">To</label>
+                                    <input type="date" class="form-control" id="plEndDate">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select" id="plTypeFilter">
+                                        <option value="all">All Transactions</option>
+                                        <option value="income">Income</option>
+                                        <option value="expense">Expense</option>
+                                        <option value="invoice">Invoices</option>
+                                        <option value="payment">Payments</option>
+                                        <option value="supplier">Supplier Payments</option>
+                                        <option value="purchase">Purchases</option>
+                                        <option value="vehicle">Vehicle Expenses</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Search</label>
+                                    <input type="text" class="form-control" id="plSearchInput" placeholder="Search description, party, ref...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="profitLossTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                            <th>Party</th>
+                                            <th>Reference</th>
+                                            <th class="text-end">Amount</th>
+                                            <th>Direction</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- SECTION: PROFILE -->
                 <div id="section-profile" class="main-section d-none">
                     <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
@@ -1210,6 +1329,22 @@
                                         <input class="form-check-input" type="checkbox" id="darkModeToggle">
                                         <label class="form-check-label" for="darkModeToggle">Dark Mode (Beta)</label>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 fw-bold text-primary">Data Backup</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted small mb-3">Backup all business data to Google Drive for recovery.</p>
+                                    <button class="btn btn-outline-primary w-100" id="backupToDriveBtn" disabled>
+                                        <i class="fas fa-cloud-upload-alt me-2"></i>Backup to Google Drive
+                                    </button>
+                                    <button class="btn btn-outline-danger w-100 mt-2" id="restoreFromDriveBtn" disabled>
+                                        <i class="fas fa-cloud-download-alt me-2"></i>Restore from Google Drive
+                                    </button>
+                                    <div class="small text-muted mt-2" id="backupStatus">Coming soon.</div>
                                 </div>
                             </div>
                         </div>
@@ -2665,6 +2800,37 @@
         </div>
     </div>
 
+    <!-- Restore Backup Modal -->
+    <div class="modal fade" id="restoreBackupModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Restore Backup from Google Drive</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger small mb-3">Restoring will overwrite existing data. This action cannot be undone.</p>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="restoreBackupTable">
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Size</th>
+                                    <th>Created</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="4" class="text-center text-muted">Loading backups...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="small text-muted" id="restoreStatus"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Image Preview Modal -->
     <div class="modal fade" id="imagePreviewModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -3003,6 +3169,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-remote-config-compat.js"></script>
     <!-- Firebase -->
     <script type="module" src="js/firebase-config.js"></script>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script type="module" src="js/dashboard.js"></script>
     <script type="module" src="js/inventory.js"></script>
     <script type="module" src="js/raw-materials.js"></script>
@@ -3015,6 +3183,7 @@
     <script type="module" src="js/vehicles.js"></script>
     <script type="module" src="js/suppliers.js"></script>
     <script type="module" src="js/staff.js"></script>
+    <script type="module" src="js/profit-loss.js"></script>
 </body>
 </html>
 
