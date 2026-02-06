@@ -78,6 +78,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (settingsForm) {
         settingsForm.addEventListener('submit', saveSettings);
     }
+    const useLocationBtn = document.getElementById('attUseLocationBtn');
+    if (useLocationBtn) {
+        useLocationBtn.addEventListener('click', setAttendanceLocation);
+    }
 
     if (manualAttendanceBtn) {
         manualAttendanceBtn.addEventListener('click', openManualAttendanceModal);
@@ -237,6 +241,9 @@ async function openSettingsModal() {
             const s = doc.data();
             document.getElementById('attStartTime').value = s.startTime || '';
             document.getElementById('attEndTime').value = s.endTime || '';
+            document.getElementById('attLat').value = s.allowedLat ?? '';
+            document.getElementById('attLng').value = s.allowedLng ?? '';
+            document.getElementById('attRadius').value = s.allowedRadius ?? '';
         }
     } catch(e) {}
 
@@ -263,14 +270,44 @@ async function saveSettings(e) {
     const businessId = user.businessId || user.uid;
     const startTime = document.getElementById('attStartTime').value;
     const endTime = document.getElementById('attEndTime').value;
+    const allowedLat = parseFloat(document.getElementById('attLat').value);
+    const allowedLng = parseFloat(document.getElementById('attLng').value);
+    const allowedRadius = parseFloat(document.getElementById('attRadius').value);
+    const locationData = {};
+    if (!Number.isNaN(allowedLat) && !Number.isNaN(allowedLng)) {
+        locationData.allowedLat = allowedLat;
+        locationData.allowedLng = allowedLng;
+    }
+    if (!Number.isNaN(allowedRadius)) {
+        locationData.allowedRadius = allowedRadius;
+    }
 
     try {
         await db.collection('users').doc(businessId).collection('settings').doc('attendance').set({
-            startTime, endTime
+            startTime, endTime, ...locationData
         }, { merge: true });
         showAlert('success', 'Settings saved');
         bootstrap.Modal.getInstance(document.getElementById('attendanceSettingsModal')).hide();
     } catch(e) { console.error(e); }
+}
+
+function setAttendanceLocation() {
+    if (!navigator.geolocation) {
+        return showAlert('danger', 'Geolocation is not supported in this browser.');
+    }
+
+    navigator.geolocation.getCurrentPosition((pos) => {
+        const { latitude, longitude } = pos.coords;
+        document.getElementById('attLat').value = latitude.toFixed(6);
+        document.getElementById('attLng').value = longitude.toFixed(6);
+        if (!document.getElementById('attRadius').value) {
+            document.getElementById('attRadius').value = 200;
+        }
+        showAlert('success', 'Location set from current position.');
+    }, (err) => {
+        console.error(err);
+        showAlert('danger', 'Unable to fetch current location.');
+    }, { enableHighAccuracy: true, timeout: 10000 });
 }
 
 async function loadPayroll() {
