@@ -90,7 +90,7 @@
                         <li class="nav-item">
                             <a class="nav-link active" href="#" data-section="dashboard">
                                 <i class="fas fa-tachometer-alt me-2"></i>
-                                Dashboard
+                                Home
                             </a>
                         </li>
                         <li class="nav-item">
@@ -102,13 +102,13 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="inventory">
                                 <i class="fas fa-boxes me-2"></i>
-                                Inventory
+                                Stock
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="raw-materials">
                                 <i class="fas fa-layer-group me-2"></i>
-                                Raw Materials
+                                Materials
                             </a>
                         </li>
                         <li class="nav-item">
@@ -126,19 +126,19 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="projects">
                                 <i class="fas fa-project-diagram me-2"></i>
-                                Projects
+                                Orders
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="invoices">
                                 <i class="fas fa-file-invoice-dollar me-2"></i>
-                                Invoices
+                                Bills
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="profit-loss">
                                 <i class="fas fa-scale-balanced me-2"></i>
-                                Profit & Loss
+                                Profit
                             </a>
                         </li>
                         <li class="nav-item">
@@ -150,7 +150,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#" data-section="staff">
                                 <i class="fas fa-id-card me-2"></i>
-                                Staff & Attendance
+                                Staff
                             </a>
                         </li>
                         <li class="nav-item">
@@ -217,7 +217,7 @@
                             <div class="col-3">
                                 <a href="#" onclick="window.navigateToSection('suppliers'); return false;" class="nav-icon-box">
                                     <div class="nav-icon-circle bg-primary bg-opacity-10 text-primary"><i class="fas fa-handshake"></i></div>
-                                    <span class="nav-label">Vendors</span>
+                                    <span class="nav-label">Suppliers</span>
                                 </a>
                             </div>
                             <div class="col-3">
@@ -229,31 +229,31 @@
                             <div class="col-3">
                                 <a href="#" onclick="window.navigateToSection('production'); return false;" class="nav-icon-box">
                                     <div class="nav-icon-circle bg-warning bg-opacity-10 text-warning"><i class="fas fa-industry"></i></div>
-                                    <span class="nav-label">Make</span>
+                                    <span class="nav-label">Production</span>
                                 </a>
                             </div>
                             <div class="col-3">
                                 <a href="#" onclick="window.navigateToSection('customers'); return false;" class="nav-icon-box">
                                     <div class="nav-icon-circle bg-danger bg-opacity-10 text-danger"><i class="fas fa-users"></i></div>
-                                    <span class="nav-label">Clients</span>
+                                    <span class="nav-label">Customers</span>
                                 </a>
                             </div>
                             <div class="col-3">
                                 <a href="#" onclick="window.navigateToSection('invoices'); return false;" class="nav-icon-box">
                                     <div class="nav-icon-circle bg-success bg-opacity-10 text-success"><i class="fas fa-file-invoice-dollar"></i></div>
-                                    <span class="nav-label">Bill</span>
+                                    <span class="nav-label">Bills</span>
                                 </a>
                             </div>
                             <div class="col-3">
                                 <a href="#" onclick="window.navigateToSection('projects'); return false;" class="nav-icon-box">
                                     <div class="nav-icon-circle bg-info bg-opacity-10 text-info"><i class="fas fa-project-diagram"></i></div>
-                                    <span class="nav-label">Projects</span>
+                                    <span class="nav-label">Orders</span>
                                 </a>
                             </div>
                             <div class="col-3">
                                 <a href="#" onclick="window.navigateToSection('vehicles'); return false;" class="nav-icon-box">
                                     <div class="nav-icon-circle bg-dark bg-opacity-10 text-dark"><i class="fas fa-truck"></i></div>
-                                    <span class="nav-label">Fleet</span>
+                                    <span class="nav-label">Vehicles</span>
                                 </a>
                             </div>
                             <div class="col-3">
@@ -377,10 +377,13 @@
                 <!-- SECTION: INVENTORY -->
                 <div id="section-inventory" class="main-section d-none">
                     <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                        <h1 class="h2">Inventory Management</h1>
+                        <div>
+                            <h1 class="h2 mb-1">Finished Goods Stock</h1>
+                            <div class="text-muted small">Stock is created only from production completion.</div>
+                        </div>
                         <div class="btn-toolbar mb-2 mb-md-0">
                             <button class="btn btn-primary me-2" id="addItemBtn">
-                                <i class="fas fa-plus me-1"></i> Add Item
+                                <i class="fas fa-plus me-1"></i> Add Product
                             </button>
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -727,7 +730,7 @@
                 <!-- SECTION: PRODUCTION -->
                 <div id="section-production" class="main-section d-none">
                     <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                        <h1 class="h2">Production Management</h1>
+                        <h1 class="h2">Production</h1>
                         <div class="d-flex gap-2 flex-wrap">
                             <button class="btn btn-outline-primary me-2" id="manageProductsBtn">
                                 <i class="fas fa-cogs me-1"></i> Mould & Product Master
@@ -743,6 +746,55 @@
                                     <li><button class="dropdown-item" id="exportProductionPdfBtn"><i class="fas fa-file-pdf me-2"></i>PDF</button></li>
                                     <li><button class="dropdown-item" id="exportProductionCsvBtn"><i class="fas fa-file-csv me-2"></i>CSV</button></li>
                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Production Flow Summary -->
+                    <div class="row mb-4 g-3">
+                        <div class="col-xl-2 col-md-4">
+                            <div class="card border-start-secondary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs fw-bold text-secondary text-uppercase mb-1">Pre-Production</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800" id="prodPlannedCount">0</div>
+                                    <small class="text-muted">Planned</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-md-4">
+                            <div class="card border-start-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs fw-bold text-warning text-uppercase mb-1">Curing</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800" id="prodCuringCount">0</div>
+                                    <small class="text-muted">In Curing</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-md-4">
+                            <div class="card border-start-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs fw-bold text-success text-uppercase mb-1">Produced</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800" id="prodCompletedCount">0</div>
+                                    <small class="text-muted">Completed</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card border-start-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs fw-bold text-info text-uppercase mb-1">Septic Allocation</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800" id="prodSepticAllocated">0</div>
+                                    <small class="text-muted">Allocated</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card border-start-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="text-xs fw-bold text-primary text-uppercase mb-1">Available Stock</div>
+                                    <div class="h5 mb-0 fw-bold text-gray-800" id="prodAvailableQty">0</div>
+                                    <small class="text-muted">Sellable</small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -763,10 +815,11 @@
                                         <tr>
                                             <th>Date</th>
                                             <th>Finished Good</th>
-                                            <th>Quantity Produced</th>
-                                            <th>Materials Used</th>
+                                            <th>Qty Produced</th>
+                                            <th>Stage</th>
                                             <th>Curing Status</th>
-                                            <th>Status</th>
+                                            <th>Septic Allocation</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -1408,7 +1461,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Add Inventory Item</h5>
+                    <h5 class="modal-title" id="modalTitle">Add Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -1425,11 +1478,10 @@
                             <div class="col-md-6">
                                 <label class="form-label">Category</label>
                                 <select class="form-select" id="category">
-                                    <option value="Finished Goods">Finished Goods (Tanks/Rings)</option>
-                                    <option value="Molds">Molds & Equipment</option>
-                                    <option value="PVC Pipes">PVC Pipes</option>
-                                    <option value="Fittings">Fittings</option>
-                                    <option value="Tools">Tools</option>
+                                    <option value="RCC Pipes">RCC Pipes</option>
+                                    <option value="Septic Tank Products">Septic Tank Products</option>
+                                    <option value="Moulds & Equipment">Moulds & Equipment</option>
+                                    <option value="Tools & Handling">Tools & Handling</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
@@ -1438,7 +1490,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" value="0">
+                                <input type="number" class="form-control" id="quantity" value="0" readonly>
+                                <div class="form-text">Stock is added only from production.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Reorder Level</label>
@@ -1493,20 +1546,22 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Category</label>
-                            <select class="form-select" id="rmCategory">
-                                <option value="Raw Materials">Raw Materials (General)</option>
-                                <option value="Cement">Cement</option>
-                                <option value="Sand">Sand</option>
-                                <option value="Aggregate">Aggregate (Metal)</option>
-                                <option value="Steel">Steel</option>
-                                <option value="Additives">Additives</option>
-                                <option value="Chemicals">Chemicals</option>
-                            </select>
+                                <select class="form-select" id="rmCategory">
+                                    <option value="Raw Materials">Raw Materials (General)</option>
+                                    <option value="Cement">Cement</option>
+                                    <option value="Sand">Sand</option>
+                                    <option value="Aggregate">Aggregate (Metal)</option>
+                                    <option value="Steel">Steel / Rebar</option>
+                                    <option value="Fly Ash">Fly Ash</option>
+                                    <option value="Admixtures">Admixtures</option>
+                                    <option value="Chemicals">Chemicals</option>
+                                </select>
                         </div>
                         <div class="row g-2 mb-3">
-                            <div class="col-6"><label class="form-label">Quantity</label><input type="number" class="form-control" id="rmQuantity" value="0"></div>
+                            <div class="col-6"><label class="form-label">Quantity</label><input type="number" class="form-control" id="rmQuantity" value="0" readonly></div>
                             <div class="col-6"><label class="form-label">Unit</label><input type="text" class="form-control" id="rmUnit" value="kg"></div>
                         </div>
+                        <div class="form-text mb-3">Quantity increases only through supplier purchase entries.</div>
                         <div class="row g-2 mb-3">
                             <div class="col-6"><label class="form-label">Reorder Level</label><input type="number" class="form-control" id="rmReorder" value="100"></div>
                             <div class="col-6"><label class="form-label">Cost Price (₹)</label><input type="number" class="form-control" id="rmCost"></div>
@@ -2007,14 +2062,14 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Record Production Run</h5>
+                    <h5 class="modal-title">Add Production</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="productionForm">
-                        <div class="row mb-3">
+                        <div class="row g-3 mb-3">
                             <div class="col-12">
-                                <label class="form-label fw-bold">Select Product / Work Order</label>
+                                <label class="form-label fw-bold">Product</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-clipboard-list"></i></span>
                                     <select class="form-select" id="recipeSelect">
@@ -2024,70 +2079,90 @@
                                 </div>
                                 <div id="productDetails" class="form-text text-primary fw-bold mt-1"></div>
                             </div>
-                        </div>
-                        <div class="row mb-4">
-                            <div class="col-md-8">
-                                <label class="form-label fw-bold">Finished Good (Output)</label>
-                                <select class="form-select" id="finishedGoodSelect" required>
-                                    <!-- Populated via JS -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Stage</label>
+                                <select class="form-select" id="productionStage">
+                                    <option value="Planned">Planned</option>
+                                    <option value="Curing" selected>Curing</option>
+                                    <option value="Completed">Completed</option>
                                 </select>
                             </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold">Finished Product</label>
+                                <select class="form-select" id="finishedGoodSelect" required></select>
+                            </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold">Quantity Produced</label>
+                                <label class="form-label fw-bold">Quantity Made</label>
                                 <input type="number" class="form-control" id="produceQuantity" min="1" required>
                             </div>
-                            <div class="col-md-4 mt-3">
-                                <label class="form-label text-danger">Broken/Damaged (Qty)</label>
+                            <div class="col-md-4">
+                                <label class="form-label">Septic Allocation</label>
+                                <input type="number" class="form-control" id="internalUseQty" value="0" min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Broken / Rejected</label>
                                 <input type="number" class="form-control" id="brokenQuantity" value="0" min="0">
                             </div>
-                            <div class="col-md-4 mt-3">
-                                <label class="form-label text-warning">Material Wastage (Kg/Est)</label>
-                                <input type="number" class="form-control" id="wastageQuantity" value="0" min="0">
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <label class="form-label">Production Date</label>
-                                <input type="date" class="form-control" id="productionDate">
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <label class="form-label">Supervisor Name</label>
-                                <input type="text" class="form-control" id="productionSupervisor">
-                            </div>
-                            <div class="col-md-3 mt-3">
-                                <label class="form-label">Labour Cost (₹)</label>
-                                <input type="number" class="form-control" id="labourCost" value="0">
-                            </div>
-                            <div class="col-md-3 mt-3">
-                                <label class="form-label">Power Cost (₹)</label>
-                                <input type="number" class="form-control" id="powerCost" value="0">
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <label class="form-label">Moulds Assigned</label>
-                                <input type="text" class="form-control" id="mouldsUsed" placeholder="Auto-filled from Product Master">
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <label class="form-label">Curing Period (Days)</label>
+                            <div class="col-md-6">
+                                <label class="form-label">Curing Days</label>
                                 <input type="number" class="form-control" id="curingDays" value="1" min="0">
                             </div>
-                        </div>
-                        
-                        <hr>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="form-label fw-bold mb-0">Raw Materials Used (Input)</label>
-                            <span id="stockStatusBadge" class="badge bg-secondary">Status: Pending</span>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="addIngredientBtn"><i class="fas fa-plus"></i> Add Material</button>
-                        </div>
-                        
-                        <div id="ingredientsContainer" class="mb-3 p-2 bg-light rounded">
-                            <!-- Dynamic Rows -->
-                        </div>
-                        
-                        <div class="d-flex justify-content-end mb-3">
-                             <h6 class="mb-0">Estimated Cost: <span class="text-primary fw-bold" id="estimatedCost">₹0.00</span></h6>
+                            <div class="col-md-6">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" id="productionDate">
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Notes</label>
-                            <textarea class="form-control" id="productionNotes" rows="2"></textarea>
+                        <div class="accordion mb-3" id="prodAdvanced">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="prodAdvancedHeading">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#prodAdvancedBody">
+                                        Advanced (Optional)
+                                    </button>
+                                </h2>
+                                <div id="prodAdvancedBody" class="accordion-collapse collapse" data-bs-parent="#prodAdvanced">
+                                    <div class="accordion-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Supervisor</label>
+                                                <input type="text" class="form-control" id="productionSupervisor">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Moulds Used</label>
+                                                <input type="text" class="form-control" id="mouldsUsed" placeholder="Auto-filled from Product Master">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Labour Cost (₹)</label>
+                                                <input type="number" class="form-control" id="labourCost" value="0">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Power Cost (₹)</label>
+                                                <input type="number" class="form-control" id="powerCost" value="0">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Material Wastage (Kg/Est)</label>
+                                                <input type="number" class="form-control" id="wastageQuantity" value="0" min="0">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Notes</label>
+                                                <textarea class="form-control" id="productionNotes" rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                        <hr class="my-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <label class="form-label fw-bold mb-0">Raw Materials Used</label>
+                                            <span id="stockStatusBadge" class="badge bg-secondary">Status: Pending</span>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="addIngredientBtn"><i class="fas fa-plus"></i> Add Material</button>
+                                        </div>
+                                        <div id="ingredientsContainer" class="mb-3 p-2 bg-light rounded">
+                                            <!-- Dynamic Rows -->
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                             <h6 class="mb-0">Estimated Cost: <span class="text-primary fw-bold" id="estimatedCost">₹0.00</span></h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -2127,23 +2202,40 @@
                             <h6 class="fw-bold text-primary mb-3" id="pmModalTitle">New Product Definition</h6>
                             <form id="productMasterForm">
                                 <div class="row g-3 mb-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Product Name</label>
-                                        <input type="text" class="form-control" id="pmName" placeholder="e.g. 1000L Septic Tank">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Category</label>
+                                        <select class="form-select" id="pmCategory">
+                                            <option value="RCC Pipes">RCC Pipes</option>
+                                            <option value="Septic Tank Products">Septic Tank Products</option>
+                                        </select>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Product Type</label>
-                                        <select class="form-select" id="pmType">
-                                            <option value="Septic Tank">Septic Tank</option>
-                                            <option value="Water Tank">Water Tank</option>
-                                            <option value="Drainage Ring">Drainage Ring</option>
-                                            <option value="Manhole Cover">Manhole Cover</option>
-                                            <option value="Other">Other</option>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Pipe Type</label>
+                                        <select class="form-select" id="pmPipeType">
+                                            <option value="Plain End">Plain End (Collar Joint)</option>
+                                            <option value="Socket & Spigot">Socket & Spigot</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Load Class</label>
+                                        <select class="form-select" id="pmLoadClass">
+                                            <option value="NP2">NP2</option>
+                                            <option value="NP3">NP3</option>
+                                            <option value="NP4">NP4</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Size / Dimensions</label>
-                                        <input type="text" class="form-control" id="pmDimensions" placeholder="Dia x Height x Thickness">
+                                        <label class="form-label">Septic Product Type</label>
+                                        <select class="form-select" id="pmSepticType">
+                                            <option value="Septic Tank Rings">Septic Tank Rings</option>
+                                            <option value="Bottom Slabs">Bottom Slabs</option>
+                                            <option value="Cover Slabs">Cover Slabs</option>
+                                            <option value="Complete Septic Tank Sets">Complete Septic Tank Sets</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Product Name</label>
+                                        <input type="text" class="form-control" id="pmName" placeholder="e.g. RCC Pipe NP3 Socket & Spigot">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Compatible Mould IDs</label>
@@ -2452,9 +2544,10 @@
                                 <option value="Cement">Cement Supplier</option>
                                 <option value="Dust/Sand">Dust / Sand Supplier</option>
                                 <option value="Aggregate">Aggregate (Metal) Supplier</option>
-                                <option value="Steel">Steel / Iron Supplier</option>
-                                <option value="PVC/Fittings">PVC & Fittings</option>
-                                <option value="Molds/Equipment">Molds & Equipment</option>
+                                <option value="Steel">Steel / Rebar Supplier</option>
+                                <option value="Fly Ash">Fly Ash Supplier</option>
+                                <option value="Admixtures">Admixtures / Chemicals</option>
+                                <option value="Moulds/Equipment">Moulds & Equipment</option>
                                 <option value="Logistics">Logistics / Transport</option>
                                 <option value="General">General / Other</option>
                             </select>
@@ -3236,7 +3329,15 @@
 
                 const db = firebase.firestore();
                 try {
-                    const snapshot = await db.collection('vehicles').where('userId', '==', user.uid).get();
+                    const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+                    const businessId = localUser.businessId || user.uid;
+                    if (!businessId) return;
+
+                    const snapshot = await db
+                        .collection('users')
+                        .doc(businessId)
+                        .collection('vehicles')
+                        .get();
                     
                     if (snapshot.empty) {
                         localStorage.setItem('pipepro_vehicle_alert_date', todayStr);
@@ -3248,7 +3349,7 @@
                     
                     snapshot.forEach(doc => {
                         const data = doc.data();
-                        const vName = data.vehicleName || 'Unknown Vehicle';
+                        const vName = data.vehicleName || data.name || 'Unknown Vehicle';
                         checkDocExpiry(vName, 'Insurance', data.insuranceExpiry, alerts, warningDays);
                         checkDocExpiry(vName, 'Permit', data.permitExpiry, alerts, warningDays);
                         checkDocExpiry(vName, 'Fitness', data.fitnessExpiry, alerts, warningDays);
