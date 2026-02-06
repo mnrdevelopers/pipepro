@@ -2643,6 +2643,25 @@
                             <label class="form-label">Allowed Check-in End Time</label>
                             <input type="time" class="form-control" id="attEndTime">
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Allowed Location (Latitude, Longitude)</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="attLat" placeholder="Latitude">
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control" id="attLng" placeholder="Longitude">
+                                </div>
+                            </div>
+                            <div class="form-text">Use current location to set the attendance zone.</div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="attUseLocationBtn">
+                                <i class="fas fa-location-crosshairs me-1"></i> Use Current Location
+                            </button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Allowed Radius (meters)</label>
+                            <input type="number" class="form-control" id="attRadius" placeholder="e.g. 200">
+                        </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Save Settings</button>
                         </div>
@@ -3184,6 +3203,111 @@
     <script type="module" src="js/suppliers.js"></script>
     <script type="module" src="js/staff.js"></script>
     <script type="module" src="js/profit-loss.js"></script>
+
+    <!-- Daily Vehicle Alert Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for Firebase to load
+            const checkInterval = setInterval(() => {
+                if (window.firebase && window.firebase.auth()) {
+                    clearInterval(checkInterval);
+                    initDailyAlerts();
+                }
+            }, 500);
+
+            function initDailyAlerts() {
+                firebase.auth().onAuthStateChanged(user => {
+                    if (user) {
+                        checkAndSendAlerts(user);
+                        setInterval(() => checkAndSendAlerts(user), 60000); // Check every minute
+                    }
+                });
+            }
+
+            async function checkAndSendAlerts(user) {
+                const now = new Date();
+                // Run only if it's 10:00 AM or later
+                if (now.getHours() < 10) return;
+
+                const todayStr = now.toISOString().split('T')[0];
+                const lastSent = localStorage.getItem('pipepro_vehicle_alert_date');
+
+                if (lastSent === todayStr) return;
+
+                const db = firebase.firestore();
+                try {
+                    const snapshot = await db.collection('vehicles').where('userId', '==', user.uid).get();
+                    
+                    if (snapshot.empty) {
+                        localStorage.setItem('pipepro_vehicle_alert_date', todayStr);
+                        return;
+                    }
+
+                    let alerts = [];
+                    const warningDays = 30;
+                    
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const vName = data.vehicleName || 'Unknown Vehicle';
+                        checkDocExpiry(vName, 'Insurance', data.insuranceExpiry, alerts, warningDays);
+                        checkDocExpiry(vName, 'Permit', data.permitExpiry, alerts, warningDays);
+                        checkDocExpiry(vName, 'Fitness', data.fitnessExpiry, alerts, warningDays);
+                        checkDocExpiry(vName, 'PUC', data.pucExpiry, alerts, warningDays);
+                    });
+
+                    if (alerts.length > 0) {
+                        console.log("Sending daily vehicle alerts...");
+                        if (window.emailjs) {
+                            const emailParams = {
+                                to_email: user.email,
+                                to_name: user.displayName || 'User',
+                                subject: 'Daily Vehicle Expiry Alerts',
+                                message: alerts.join('\n')
+                            };
+                            
+                            const remoteConfig = firebase.remoteConfig();
+                            remoteConfig.settings = { minimumFetchIntervalMillis: 3600000 };
+                            
+                            remoteConfig.fetchAndActivate().then(() => {
+                                const SERVICE_ID = remoteConfig.getValue('emailjs_service_id').asString();
+                                const TEMPLATE_ID = remoteConfig.getValue('emailjs_template_id').asString();
+                                
+                                if (SERVICE_ID && TEMPLATE_ID) {
+                                    emailjs.send(SERVICE_ID, TEMPLATE_ID, emailParams)
+                                        .then(() => {
+                                            console.log('Daily alert email sent successfully');
+                                            localStorage.setItem('pipepro_vehicle_alert_date', todayStr);
+                                        })
+                                        .catch((err) => {
+                                            console.error('Failed to send daily alert email.', err);
+                                        });
+                                }
+                            }).catch(err => console.error('Error fetching Remote Config:', err));
+                        }
+                    } else {
+                        // No alerts today, mark as checked
+                        localStorage.setItem('pipepro_vehicle_alert_date', todayStr);
+                    }
+                } catch (error) {
+                    console.error("Error checking vehicle alerts:", error);
+                }
+            }
+
+            function checkDocExpiry(vehicle, docType, dateStr, alertsArray, warningDays) {
+                if (!dateStr) return;
+                const expiryDate = new Date(dateStr);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                const diffTime = expiryDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays <= warningDays) {
+                    let status = diffDays < 0 ? `EXPIRED ${Math.abs(diffDays)} days ago` : `Expires in ${diffDays} days`;
+                    alertsArray.push(`[${vehicle}] ${docType}: ${status} (${dateStr})`);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
-
