@@ -578,7 +578,7 @@ async function compressImage(file) {
 }
 
 window.deleteDoc = (type) => {
-    window.showConfirm('Remove Document', 'Are you sure you want to remove this document?', () => {
+    window.showConfirm('Remove Document', 'Are you sure you want to remove this document?', async () => {
         // Clear UI
         document.getElementById(`${type}Url`).value = '';
         document.getElementById(`${type}File`).value = '';
@@ -589,7 +589,28 @@ window.deleteDoc = (type) => {
         
         // Update Status
         const statusDiv = document.getElementById(`${type}Status`);
-        if(statusDiv) statusDiv.innerHTML = '<span class="text-danger small">Removed (Save to confirm)</span>';
+        if(statusDiv) statusDiv.innerHTML = '<span class="text-danger small">Removed</span>';
+
+        // Persist removal for existing vehicle
+        if (currentVehicleId) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const businessId = user.businessId || user.uid;
+            try {
+                await db.collection('users')
+                    .doc(businessId)
+                    .collection('vehicles')
+                    .doc(currentVehicleId)
+                    .update({
+                        [`documents.${type}`]: firebase.firestore.FieldValue.delete(),
+                        updatedAt: new Date()
+                    });
+                loadVehicles();
+                showAlert('success', 'Document removed');
+            } catch (e) {
+                console.error(e);
+                showAlert('danger', 'Failed to remove document');
+            }
+        }
     });
 };
 
