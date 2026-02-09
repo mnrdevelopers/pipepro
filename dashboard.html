@@ -86,41 +86,17 @@
                 </a>
             </div>
 
-            <ul class="nav flex-column">
+                        <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link active" href="#" data-section="dashboard">
                                 <i class="fas fa-tachometer-alt me-2"></i>
-                                Home
+                                Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="suppliers">
+                            <a class="nav-link" href="#" data-section="supply">
                                 <i class="fas fa-handshake me-2"></i>
-                                Suppliers
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="inventory">
-                                <i class="fas fa-boxes me-2"></i>
-                                Stock
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="raw-materials">
-                                <i class="fas fa-layer-group me-2"></i>
-                                Materials
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="production">
-                                <i class="fas fa-industry me-2"></i>
-                                Production
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="customers">
-                                <i class="fas fa-users me-2"></i>
-                                Customers
+                                Suppliers & Materials
                             </a>
                         </li>
                         <li class="nav-item">
@@ -130,9 +106,39 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="production">
+                                <i class="fas fa-industry me-2"></i>
+                                Production
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="inventory">
+                                <i class="fas fa-boxes me-2"></i>
+                                Stock
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="customers">
+                                <i class="fas fa-users me-2"></i>
+                                Customers
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#" data-section="invoices">
                                 <i class="fas fa-file-invoice-dollar me-2"></i>
                                 Bills
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="gst">
+                                <i class="fas fa-file-invoice me-2"></i>
+                                GST Billing
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="payments">
+                                <i class="fas fa-hand-holding-usd me-2"></i>
+                                Payments
                             </a>
                         </li>
                         <li class="nav-item">
@@ -167,7 +173,7 @@
                         <div class="row text-center mt-3">
                             <div class="col-6 mb-3">
                                 <div class="stat-value" id="totalProjects">0</div>
-                                <small class="text-muted">Projects</small>
+                                <small class="text-muted">Orders</small>
                             </div>
                             <div class="col-6 mb-3">
                                 <div class="stat-value" id="totalCustomers">0</div>
@@ -215,9 +221,9 @@
                     <div class="container-fluid px-0 mb-4" style="margin-top: -30px;">
                         <div class="row g-2 px-2">
                             <div class="col-3">
-                                <a href="#" onclick="window.navigateToSection('suppliers'); return false;" class="nav-icon-box">
+                                <a href="#" onclick="window.navigateToSection('supply'); return false;" class="nav-icon-box">
                                     <div class="nav-icon-circle bg-primary bg-opacity-10 text-primary"><i class="fas fa-handshake"></i></div>
-                                    <span class="nav-label">Suppliers</span>
+                                    <span class="nav-label">Supply</span>
                                 </a>
                             </div>
                             <div class="col-3">
@@ -265,41 +271,154 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Desktop Hero -->
-                <div class="dashboard-hero d-none d-lg-flex">
-                    <div class="hero-copy">
-                        <div class="hero-kicker">Operations at a glance</div>
-                        <h1 class="hero-title">Build faster. Ship cleaner. Get paid sooner.</h1>
-                        <p class="hero-subtitle">A focused command center for production, inventory, and billing.</p>
-                        <div class="hero-actions">
-                            <button class="btn btn-hero-primary me-2" onclick="window.navigateToSection('projects'); return false;">
-                                <i class="fas fa-plus me-1"></i> New Project
-                            </button>
-                            <button class="btn btn-hero-secondary me-2" onclick="window.navigateToSection('invoices'); return false;">
-                                <i class="fas fa-file-invoice me-1"></i> Create Invoice
-                            </button>
-                            <button class="btn btn-hero-ghost" id="profitReportBtn">
-                                <i class="fas fa-chart-line me-1"></i> Profit Report
-                            </button>
+                <!-- Summary + Low Stock -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-xl-3 col-md-6 col-6">
+                                <div class="card border-start-primary shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="text-xs fw-bold text-primary text-uppercase mb-1">Production Summary</div>
+                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashProductionSummary">0</div>
+                                                <small class="text-muted" id="dashProductionSummarySub">This month</small>
+                                            </div>
+                                            <div class="text-primary"><i class="fas fa-industry fa-2x"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 col-6">
+                                <div class="card border-start-success shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="text-xs fw-bold text-success text-uppercase mb-1">Stock Summary</div>
+                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashStockSummary">0</div>
+                                                <small class="text-muted" id="dashStockSummarySub">Total items</small>
+                                            </div>
+                                            <div class="text-success"><i class="fas fa-boxes fa-2x"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-6 col-6">
+                                <div class="card border-start-info shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="text-xs fw-bold text-info text-uppercase mb-1">Sales Today</div>
+                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashSalesToday">₹0</div>
+                                                <small class="text-muted">Paid invoices</small>
+                                            </div>
+                                            <div class="text-info"><i class="fas fa-receipt fa-2x"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-6 col-6">
+                                <div class="card border-start-warning shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="text-xs fw-bold text-warning text-uppercase mb-1">Pending Payments</div>
+                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashPendingPayments">₹0</div>
+                                                <small class="text-muted">Invoices due</small>
+                                            </div>
+                                            <div class="text-warning"><i class="fas fa-hourglass-half fa-2x"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-6 col-6">
+                                <div class="card border-start-danger shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <div class="text-xs fw-bold text-danger text-uppercase mb-1">Low Stock Alerts</div>
+                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashLowStockAlerts">0</div>
+                                                <small class="text-muted">Needs reorder</small>
+                                            </div>
+                                            <div class="text-danger"><i class="fas fa-exclamation-triangle fa-2x"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="hero-metrics">
-                        <div class="metric-chip">
-                            <span class="chip-label">Pending Invoices</span>
-                            <span class="chip-value" data-kpi="pendingAmount">₹0</span>
+                        <div class="production-status-card mt-3">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                <div>
+                                    <div class="text-xs fw-bold text-primary text-uppercase">Production Status</div>
+                                    <div class="text-muted small">Live status and available stock</div>
+                                </div>
+                                <a href="#" onclick="window.navigateToSection('production'); return false;" class="btn btn-sm btn-outline-primary">View Production</a>
+                            </div>
+                            <div class="status-grid mt-3">
+                                <div class="status-item">
+                                    <div class="status-label">Started</div>
+                                    <div class="status-value" id="dashProdStarted">0</div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">On Curing</div>
+                                    <div class="status-value" id="dashProdCuring">0</div>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-label">Ready</div>
+                                    <div class="status-value" id="dashProdReady">0</div>
+                                </div>
+                                <div class="status-item status-highlight">
+                                    <div class="status-label">Available Stock</div>
+                                    <div class="status-value" id="dashProdAvailable">0</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="metric-chip">
-                            <span class="chip-label">Active Projects</span>
-                            <span class="chip-value" data-kpi="activeProjects">0</span>
+                        <hr class="my-3">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h6 class="m-0 fw-bold text-dark">Low Stock Alerts</h6>
+                            <span class="badge bg-danger" id="dashLowStockCount">0</span>
                         </div>
-                        <div class="metric-chip">
-                            <span class="chip-label">Low Stock Items</span>
-                            <span class="chip-value" data-kpi="lowStockItems">0</span>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0" id="lowStockTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th class="text-end">Qty</th>
+                                        <th class="text-end">Reorder</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="3" class="text-center text-muted py-2">No low stock items</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-
+                <div class="card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="m-0 fw-bold text-dark">Item-wise Stock Summary</h6>
+                            <small class="text-muted">Finished goods available by product</small>
+                        </div>
+                        <a href="#" onclick="window.navigateToSection('inventory'); return false;" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0" id="dashStockSummaryTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Category</th>
+                                        <th class="text-end">Available</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="3" class="text-center text-muted py-2">Loading stock summary...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <!-- Performance & Activity -->
                 <div class="row">
                     <div class="col-xl-8 col-lg-7">
@@ -360,12 +479,12 @@
 
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
-                                <h6 class="m-0 fw-bold text-dark">Recent Projects</h6>
+                                <h6 class="m-0 fw-bold text-dark">Recent Orders</h6>
                                 <a href="#" onclick="window.navigateToSection('projects'); return false;" class="btn btn-sm btn-outline-primary">View All</a>
                             </div>
                             <div class="card-body">
                                 <div class="list-group list-group-flush" id="recentProjects">
-                                    <!-- Projects will be loaded here -->
+                                    <!-- Orders will be loaded here -->
                                 </div>
                             </div>
                         </div>
@@ -382,9 +501,6 @@
                             <div class="text-muted small">Stock is created only from production completion.</div>
                         </div>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            <button class="btn btn-primary me-2" id="addItemBtn">
-                                <i class="fas fa-plus me-1"></i> Add Product
-                            </button>
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                     <i class="fas fa-download me-1"></i> Export
@@ -439,9 +555,28 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" id="searchInventory" placeholder="Search items...">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchInventory" placeholder="Search items...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterInventoryCategory">
+                                <option value="all">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="filterInventoryStock">
+                                <option value="all">All Stock</option>
+                                <option value="low">Low Stock</option>
+                                <option value="out">Out of Stock</option>
+                                <option value="available">Available</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 d-grid">
+                            <button class="btn btn-outline-secondary" id="resetInventoryFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
                         </div>
                     </div>
 
@@ -454,6 +589,8 @@
                                             <th>Item</th>
                                             <th>Category</th>
                                             <th>Description</th>
+                                            <th>HSN/SAC</th>
+                                            <th>GST%</th>
                                             <th>Qty</th>
                                             <th>Reorder</th>
                                             <th>Unit</th>
@@ -469,11 +606,14 @@
                     </div>
                 </div>
 
-                <!-- SECTION: RAW MATERIALS -->
-                <div id="section-raw-materials" class="main-section d-none">
+                <!-- SECTION: SUPPLIERS & MATERIALS -->
+                <div id="section-supply" class="main-section d-none">
                     <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                        <h1 class="h2">Raw Materials</h1>
+                        <h1 class="h2">Suppliers & Materials</h1>
                         <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" id="addSupplierBtn">
+                                <i class="fas fa-plus me-1"></i> Add Supplier
+                            </button>
                             <button class="btn btn-primary" id="addRawMaterialBtn">
                                 <i class="fas fa-plus me-1"></i> Add Material
                             </button>
@@ -486,6 +626,66 @@
                                     <li><button class="dropdown-item" id="exportRawMaterialsCsvBtn"><i class="fas fa-file-csv me-2"></i>CSV</button></li>
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light border d-flex flex-wrap align-items-center gap-2 mb-4">
+                        <span class="badge bg-primary">Step 1</span>
+                        <span>Add or verify supplier details.</span>
+                        <span class="badge bg-success">Step 2</span>
+                        <span>Add material and assign supplier.</span>
+                        <span class="text-muted small ms-auto">Duplicate names are blocked automatically.</span>
+                    </div>
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-0">Suppliers</h5>
+                                <small class="text-muted">Step 1: add or update supplier details.</small>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-download me-1"></i> Export
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><button class="dropdown-item" id="exportSuppliersPdfBtn"><i class="fas fa-file-pdf me-2"></i>PDF</button></li>
+                                    <li><button class="dropdown-item" id="exportSuppliersCsvBtn"><i class="fas fa-file-csv me-2"></i>CSV</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="searchSuppliers" placeholder="Search by name, contact, or phone...">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="filterSupplierType">
+                                        <option value="all">All Types</option>
+                                        <!-- Options populated by JS -->
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-select" id="filterSupplierStatus">
+                                        <option value="all">All Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row" id="suppliersContainer">
+                                <!-- Supplier cards will be loaded here by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                        <div>
+                            <h5 class="mb-0">Materials</h5>
+                            <small class="text-muted">Step 2: add materials and assign a supplier.</small>
                         </div>
                     </div>
 
@@ -533,6 +733,24 @@
 
                     <div class="card shadow mb-4">
                         <div class="card-body">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="searchRawMaterials" placeholder="Search materials...">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="filterRawMaterialCategory">
+                                        <option value="all">All Categories</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="filterRawMaterialSupplier">
+                                        <option value="all">All Suppliers</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-hover" id="rawMaterialTable">
                                     <thead>
@@ -550,52 +768,6 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- SECTION: SUPPLIERS -->
-                <div id="section-suppliers" class="main-section d-none">
-                    <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                        <h1 class="h2">Supplier Management</h1>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-primary" id="addSupplierBtn">
-                                <i class="fas fa-plus me-1"></i> Add Supplier
-                            </button>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                    <i class="fas fa-download me-1"></i> Export
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><button class="dropdown-item" id="exportSuppliersPdfBtn"><i class="fas fa-file-pdf me-2"></i>PDF</button></li>
-                                    <li><button class="dropdown-item" id="exportSuppliersCsvBtn"><i class="fas fa-file-csv me-2"></i>CSV</button></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filter Controls -->
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                        <input type="text" class="form-control" id="searchSuppliers" placeholder="Search by name, contact, or phone...">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <select class="form-select" id="filterSupplierType">
-                                        <option value="all">All Types</option>
-                                        <!-- Options populated by JS -->
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Supplier Cards -->
-                    <div class="row" id="suppliersContainer">
-                        <!-- Supplier cards will be loaded here by JS -->
                     </div>
                 </div>
 
@@ -643,6 +815,26 @@
                         <div class="tab-pane fade show active" id="staffListPane" role="tabpanel">
                             <div class="card shadow">
                                 <div class="card-body">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-5">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                                <input type="text" class="form-control" id="searchStaff" placeholder="Search staff...">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="form-select" id="filterStaffRole">
+                                                <option value="all">All Roles</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="form-select" id="filterStaffStatus">
+                                                <option value="all">All Status</option>
+                                                <option value="Active">Active</option>
+                                                <option value="Inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover" id="staffTable">
                                             <thead>
@@ -650,7 +842,7 @@
                                                     <th>Name</th>
                                                     <th>Mobile</th>
                                                     <th>Role</th>
-                                                    <th>Daily Wage</th>
+                                                    <th>Wage / Salary</th>
                                                     <th>Status</th>
                                                     <th>Actions</th>
                                                 </tr>
@@ -673,6 +865,22 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                                <input type="text" class="form-control" id="searchAttendance" placeholder="Search attendance...">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select class="form-select" id="filterAttendanceStatus">
+                                                <option value="all">All Status</option>
+                                                <option value="Present">Present</option>
+                                                <option value="Late">Late</option>
+                                                <option value="Absent">Absent</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover" id="attendanceTable">
                                             <thead>
@@ -705,6 +913,19 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                                <input type="text" class="form-control" id="searchPayroll" placeholder="Search payroll...">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select class="form-select" id="filterPayrollRole">
+                                                <option value="all">All Roles</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover" id="payrollTable">
                                             <thead>
@@ -713,11 +934,12 @@
                                                     <th>Role</th>
                                                     <th>Days Present</th>
                                                     <th>Total Wages</th>
+                                                    <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
                                             <tfoot class="table-light fw-bold">
-                                                <tr><td colspan="3" class="text-end">Total Payout:</td><td id="payrollTotalWages">₹0</td></tr>
+                                                <tr><td colspan="3" class="text-end">Total Payout:</td><td id="payrollTotalWages">₹0</td><td></td></tr>
                                             </tfoot>
                                         </table>
                                     </div>
@@ -730,14 +952,24 @@
                 <!-- SECTION: PRODUCTION -->
                 <div id="section-production" class="main-section d-none">
                     <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                        <h1 class="h2">Production</h1>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <button class="btn btn-outline-primary me-2" id="manageProductsBtn">
-                                <i class="fas fa-cogs me-1"></i> Mould & Product Master
-                            </button>
+                        <div>
+                            <h1 class="h2 mb-1">Production</h1>
+                            <div class="text-muted small">Manage production runs, curing, and ready stock.</div>
+                        </div>
+                        <div class="section-actions d-flex gap-2 flex-wrap">
                             <button class="btn btn-primary" id="addProductionBtn">
                                 <i class="fas fa-hammer me-1"></i> New Production Run
                             </button>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-sitemap me-1"></i> Masters Setup
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#productMasterModal">Product Master</button></li>
+                                    <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#moldMasterModal">Mould Master</button></li>
+                                    <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#locationMasterModal">Location Master</button></li>
+                                </ul>
+                            </div>
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                     <i class="fas fa-download me-1"></i> Export
@@ -750,17 +982,19 @@
                         </div>
                     </div>
 
-                    <!-- Production Flow Summary -->
-                    <div class="row mb-4 g-3">
-                        <div class="col-xl-2 col-md-4">
-                            <div class="card border-start-secondary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="text-xs fw-bold text-secondary text-uppercase mb-1">Pre-Production</div>
-                                    <div class="h5 mb-0 fw-bold text-gray-800" id="prodPlannedCount">0</div>
-                                    <small class="text-muted">Planned</small>
+                    <div class="tab-content" id="productionTabContent">
+                        <div class="tab-pane fade show active" id="prodRunsPane" role="tabpanel">
+                            <!-- Production Flow Summary -->
+                            <div class="row mb-4 g-3">
+                                <div class="col-xl-2 col-md-4">
+                                    <div class="card border-start-secondary shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="text-xs fw-bold text-secondary text-uppercase mb-1">In Production</div>
+                                            <div class="h5 mb-0 fw-bold text-gray-800" id="prodInProductionCount">0</div>
+                                            <small class="text-muted">Started</small>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
                         <div class="col-xl-2 col-md-4">
                             <div class="card border-start-warning shadow h-100 py-2">
                                 <div class="card-body">
@@ -799,34 +1033,103 @@
                         </div>
                     </div>
 
-                    <!-- Curing Status Cards -->
-                    <div class="row mb-4" id="curingStatsContainer">
-                        <!-- Populated by JS -->
-                    </div>
+                            <!-- Curing Status Cards -->
+                            <div class="row mb-4" id="curingStatsContainer">
+                                <!-- Populated by JS -->
+                            </div>
 
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 fw-bold text-primary">Recent Production Runs</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover" id="productionTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Finished Good</th>
-                                            <th>Qty Produced</th>
-                                            <th>Stage</th>
-                                            <th>Curing Status</th>
-                                            <th>Septic Allocation</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-body d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                                    <div class="text-muted small">Status Timeline</div>
+                                    <div class="d-flex gap-3 flex-wrap">
+                                        <span class="badge bg-secondary">Started: <span id="prodStartedCount">0</span></span>
+                                        <span class="badge bg-warning text-dark">On Curing: <span id="prodOnCuringCount">0</span></span>
+                                        <span class="badge bg-success">Ready: <span id="prodReadyCount">0</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Search</label>
+                                            <input type="text" class="form-control" id="productionSearch" placeholder="Search product, location, batch...">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Stage</label>
+                                            <select class="form-select" id="productionStageFilter">
+                                                <option value="all">All Stages</option>
+                                                <option value="Started">Started</option>
+                                                <option value="On Curing">On Curing</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">From</label>
+                                            <input type="date" class="form-control" id="productionDateFrom">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">To</label>
+                                            <input type="date" class="form-control" id="productionDateTo">
+                                        </div>
+                                        <div class="col-md-1 d-grid">
+                                            <button class="btn btn-outline-secondary" id="resetProductionFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 fw-bold text-primary">RCC Pipe Production Runs</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover production-table" id="productionTablePipes">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Finished Good</th>
+                                                    <th>Qty Produced</th>
+                                                    <th>Stage</th>
+                                                    <th>Curing Status</th>
+                                                    <th>Septic Allocation</th>
+                                                    <th>Locations</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 fw-bold text-primary">Septic Tank Assembly Runs</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover production-table" id="productionTableSeptic">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Finished Good</th>
+                                                    <th>Qty Produced</th>
+                                                    <th>Stage</th>
+                                                    <th>Septic Allocation</th>
+                                                    <th>Locations</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+
+                                            </div>
                 </div>
 
                 <!-- SECTION: VEHICLES -->
@@ -852,6 +1155,41 @@
                         </div>
                     </div>
 
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label">Search</label>
+                                    <input type="text" class="form-control" id="vehicleSearch" placeholder="Search vehicle, owner, model...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select" id="vehicleTypeFilter">
+                                        <option value="all">All Types</option>
+                                        <option value="Truck">Truck</option>
+                                        <option value="Trolley">Trolley</option>
+                                        <option value="JCB">JCB</option>
+                                        <option value="Mixer">Mixer</option>
+                                        <option value="Car">Car</option>
+                                        <option value="Bike">Bike</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Document Status</label>
+                                    <select class="form-select" id="vehicleStatusFilter">
+                                        <option value="all">All Status</option>
+                                        <option value="ok">OK</option>
+                                        <option value="expiring">Expiring Soon</option>
+                                        <option value="expired">Expired</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 d-grid">
+                                    <button class="btn btn-outline-secondary" id="resetVehicleFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row" id="vehiclesContainer">
                         <!-- Vehicle Cards Loaded Here -->
                     </div>
@@ -864,6 +1202,25 @@
                             </button>
                         </div>
                         <div class="card-body">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="vehicleExpenseSearch" placeholder="Search expenses...">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="vehicleExpenseTypeFilter">
+                                        <option value="all">All Types</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="date" class="form-control" id="vehicleExpenseFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="date" class="form-control" id="vehicleExpenseTo">
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-hover" id="vehicleExpensesTable">
                                     <thead>
@@ -981,6 +1338,13 @@
                                     <option value="all">All Types</option>
                                 </select>
                             </div>
+                            <div class="col-md-2">
+                                <select class="form-select" id="filterCustomerStatus">
+                                    <option value="all">All Status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -994,7 +1358,7 @@
                                             <th>Phone</th>
                                             <th>Company</th>
                                             <th>Type</th>
-                                            <th>Projects</th>
+                                            <th>Orders</th>
                                             <th>Total Spent</th>
                                             <th>Status</th>
                                             <th>Last Contact</th>
@@ -1008,13 +1372,13 @@
                     </div>
                 </div>
 
-                <!-- SECTION: PROJECTS -->
+                <!-- SECTION: ORDERS -->
                 <div id="section-projects" class="main-section d-none">
                     <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                        <h1 class="h2">Projects</h1>
+                        <h1 class="h2">Orders</h1>
                         <div class="d-flex gap-2">
                             <button class="btn btn-primary" id="addProjectBtn">
-                                <i class="fas fa-plus me-1"></i> New Project
+                                <i class="fas fa-plus me-1"></i> New Order
                             </button>
                             <div class="dropdown">
                                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -1028,17 +1392,51 @@
                         </div>
                     </div>
 
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Search</label>
+                                    <input type="text" class="form-control" id="orderSearch" placeholder="Search order or customer...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="orderStatusFilter">
+                                        <option value="all">All Status</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Processing">Processing</option>
+                                        <option value="Dispatched">Dispatched</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">From</label>
+                                    <input type="date" class="form-control" id="orderDateFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">To</label>
+                                    <input type="date" class="form-control" id="orderDateTo">
+                                </div>
+                                <div class="col-md-1 d-grid">
+                                    <button class="btn btn-outline-secondary" id="resetOrderFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card shadow">
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover" id="projectsTable">
                                     <thead>
                                         <tr>
-                                            <th>Project Name</th>
+                                            <th>Order Name</th>
                                             <th>Customer</th>
                                             <th>Status</th>
-                                            <th>Start Date</th>
-                                            <th>Value</th>
+                                            <th>Order Date</th>
+                                            <th>Delivery Date</th>
+                                            <th>Total</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -1054,9 +1452,6 @@
                     <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
                         <h1 class="h2">Invoices</h1>
                         <div class="d-flex gap-2 flex-wrap">
-                            <button class="btn btn-outline-dark me-2" id="invoiceSettingsBtn">
-                                <i class="fas fa-palette me-1"></i> Templates
-                            </button>
                             <button class="btn btn-primary" id="createInvoiceBtn">
                                 <i class="fas fa-plus me-1"></i> Create Invoice
                             </button>
@@ -1072,6 +1467,207 @@
                         </div>
                     </div>
 
+                    <div class="card shadow mt-4" id="invoiceFormContainer">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 fw-bold text-primary">Create Invoice</h6>
+                            <div class="d-flex gap-2">
+                                <select class="form-select form-select-sm" id="invoiceLayoutSelect" style="width: 240px;">
+                                    <option value="original">Original</option>
+                                    <option value="corporate">Professional Corporate Structure</option>
+                                    <option value="accounting">Professional Accounting Layout</option>
+                                    <option value="manufacturing">Professional Manufacturing Invoice Layout</option>
+                                    <option value="clean-grid">Professional Clean Grid Layout</option>
+                                    <option value="print-optimized">Professional Print Optimized Layout</option>
+                                </select>
+                                <select class="form-select form-select-sm" id="invoiceCopySelect" style="width: 160px;">
+                                    <option value="Original">Original</option>
+                                    <option value="Duplicate">Duplicate</option>
+                                    <option value="Triplicate">Triplicate</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-primary" id="printInvoicePreviewBtn"><i class="fas fa-print me-1"></i>Print Selected</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <form id="invoiceForm">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Customer</label>
+                                                <select class="form-select" id="invCustomerSelect"></select>
+                                            </div>
+                                            <div class="col-md-6 d-flex align-items-end">
+                                                <div class="form-check mt-3">
+                                                    <input class="form-check-input" type="checkbox" id="invShipSame" checked>
+                                                    <label class="form-check-label" for="invShipSame">Ship To same as Bill To</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Invoice Date</label>
+                                                <input type="date" class="form-control" id="invDate">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Order / Project</label>
+                                                <select class="form-select" id="invProjectSelect"></select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">PO Number</label>
+                                                <input type="text" class="form-control" id="invPoNumber">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">PO Date</label>
+                                                <input type="date" class="form-control" id="invPoDate">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Vehicle</label>
+                                                <select class="form-select" id="invVehicle"></select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Driver</label>
+                                                <input type="text" class="form-control" id="invDriver">
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="border rounded p-2 bg-light small text-muted">Ship To Details (if different)</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Ship To Name</label>
+                                                <input type="text" class="form-control" id="invShipName">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Ship To Phone</label>
+                                                <input type="text" class="form-control" id="invShipPhone">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Ship To Address</label>
+                                                <input type="text" class="form-control" id="invShipAddress">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">City</label>
+                                                <input type="text" class="form-control" id="invShipCity">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">State</label>
+                                                <input type="text" class="form-control" id="invShipState">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Pincode</label>
+                                                <input type="text" class="form-control" id="invShipZip">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">GSTIN</label>
+                                                <input type="text" class="form-control" id="invShipTaxId">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Village</label>
+                                                <select class="form-select" id="invShipVillage">
+                                                    <option value="">Select Village</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">District</label>
+                                                <input type="text" class="form-control" id="invShipDistrict">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Mandal</label>
+                                                <select class="form-select" id="invShipMandal">
+                                                    <option value="">Select Mandal</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-sm align-middle" id="invItemsTable">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Item</th>
+                                                        <th>Qty</th>
+                                                        <th>Price</th>
+                                                        <th>Total</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="invItemsContainer"></tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3" class="text-end">Transport Cost:</td>
+                                                        <td colspan="2"><input type="number" class="form-control form-control-sm text-end" id="invTransportCost" value="0"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="text-end">Amount Paid:</td>
+                                                        <td colspan="2"><input type="number" class="form-control form-control-sm text-end" id="invAmountPaid" value="0"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="text-end">Balance Due:</td>
+                                                        <td colspan="2" class="text-end fw-bold text-danger" id="invBalance">â‚¹0.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="text-end fw-bold">Grand Total:</td>
+                                                        <td colspan="2" class="fw-bold text-primary" id="invGrandTotal">â‚¹0.00</td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" id="invAddItemBtn"><i class="fas fa-plus me-1"></i>Add Item</button>
+
+                                        <div class="mb-3 mt-3">
+                                            <label class="form-label fw-bold">Customer Signature</label>
+                                            <div class="border rounded p-2 bg-light text-center">
+                                                <canvas id="signaturePad" width="400" height="150" class="bg-white border shadow-sm" style="touch-action: none;"></canvas>
+                                                <div class="mt-2 text-end">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="clearSignatureBtn"><i class="fas fa-eraser me-1"></i>Clear</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-end">
+                                            <button type="button" class="btn btn-primary" id="saveInvoiceBtn">Create Invoice</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-lg-6 invoice-preview-col">
+                                    <div class="border rounded bg-white invoice-preview-wrap" style="min-height: 700px;">
+                                        <div class="invoice-thumbs-overlay" id="invoiceTemplateThumbs">
+                                            <div class="d-flex gap-2" id="invoiceTemplateThumbList"></div>
+                                        </div>
+                                        <iframe id="invoicePreviewFrame" style="border: none; width: 100%; height: 100%;" title="Invoice Preview"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-3 mt-4">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Search</label>
+                                    <input type="text" class="form-control" id="invoiceSearch" placeholder="Search invoice or customer...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="invoiceStatusFilter">
+                                        <option value="all">All Status</option>
+                                        <option value="Paid">Paid</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Overdue">Overdue</option>
+                                        <option value="Draft">Draft</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">From</label>
+                                    <input type="date" class="form-control" id="invoiceDateFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">To</label>
+                                    <input type="date" class="form-control" id="invoiceDateTo">
+                                </div>
+                                <div class="col-md-1 d-grid">
+                                    <button class="btn btn-outline-secondary" id="resetInvoiceFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card shadow">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -1081,12 +1677,402 @@
                                             <th>Date</th>
                                             <th>Invoice #</th>
                                             <th>Customer</th>
-                                            <th>Amount</th>
+                                            <th class="text-end">Amount</th>
                                             <th>Status</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: GST BILLING -->
+                <div id="section-gst" class="main-section d-none">
+                    <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                        <div>
+                            <h1 class="h2">GST Billing</h1>
+                            <div class="text-muted small">Tax Invoice, Credit Note, Debit Note, Delivery Challan, E-way Bill info.</div>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-download me-1"></i> Export
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><button class="dropdown-item" id="exportGstCsvBtn"><i class="fas fa-file-csv me-2"></i>CSV</button></li>
+                                    <li><button class="dropdown-item" id="exportGstPdfBtn"><i class="fas fa-file-pdf me-2"></i>PDF</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label">Search</label>
+                                    <input type="text" class="form-control" id="gstSearch" placeholder="Search invoice/customer...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select" id="gstTypeFilter">
+                                        <option value="all">All</option>
+                                        <option value="Tax Invoice">Tax Invoice</option>
+                                        <option value="Credit Note">Credit Note</option>
+                                        <option value="Debit Note">Debit Note</option>
+                                        <option value="Delivery Challan">Delivery Challan</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">From</label>
+                                    <input type="date" class="form-control" id="gstDateFrom">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">To</label>
+                                    <input type="date" class="form-control" id="gstDateTo">
+                                </div>
+                                <div class="col-md-1 d-grid">
+                                    <button class="btn btn-outline-secondary" id="resetGstFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="gstTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Doc #</th>
+                                            <th>Type</th>
+                                            <th>Customer</th>
+                                            <th class="text-end">Amount</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow" id="gstFormContainer">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 fw-bold text-primary">Create GST Document</h6>
+                            <div class="d-flex gap-2">
+                                <select class="form-select form-select-sm" id="gstDocType" style="width: 180px;">
+                                    <option value="Tax Invoice">Tax Invoice</option>
+                                    <option value="Credit Note">Credit Note</option>
+                                    <option value="Debit Note">Debit Note</option>
+                                    <option value="Delivery Challan">Delivery Challan</option>
+                                </select>
+                                <select class="form-select form-select-sm" id="gstTaxMode" style="width: 170px;">
+                                    <option value="CGST_SGST">CGST + SGST</option>
+                                    <option value="IGST">IGST (Inter-State)</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-primary" id="printGstPreviewBtn"><i class="fas fa-print me-1"></i>Print</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-lg-6">
+                                    <form id="gstForm">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Customer</label>
+                                                <select class="form-select" id="gstCustomer"></select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Date</label>
+                                                <input type="date" class="form-control" id="gstDate">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Place of Supply</label>
+                                                <input type="text" class="form-control" id="gstPlaceOfSupply">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Reverse Charge</label>
+                                                <select class="form-select" id="gstReverseCharge">
+                                                    <option value="No">No</option>
+                                                    <option value="Yes">Yes</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">E-way Bill No</label>
+                                                <input type="text" class="form-control" id="gstEwayBill">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Transporter</label>
+                                                <input type="text" class="form-control" id="gstTransporter">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Vehicle</label>
+                                                <input type="text" class="form-control" id="gstVehicle">
+                                            </div>
+                                        </div>
+
+                                          <div class="table-responsive mt-3">
+                                              <table class="table table-sm align-middle" id="gstItemsTable">
+                                                  <thead class="table-light">
+                                                      <tr>
+                                                          <th>Item</th>
+                                                          <th>HSN/SAC</th>
+                                                          <th>GST%</th>
+                                                          <th class="text-end">Qty</th>
+                                                          <th class="text-end">Price</th>
+                                                          <th class="text-end">Total</th>
+                                                          <th></th>
+                                                      </tr>
+                                                  </thead>
+                                                  <tbody id="gstItemsContainer"></tbody>
+                                                  <tfoot>
+                                                      <tr>
+                                                          <td colspan="5" class="text-end">Transport Cost:</td>
+                                                          <td colspan="2"><input type="number" class="form-control form-control-sm text-end" id="gstTransportCost" value="0"></td>
+                                                      </tr>
+                                                      <tr>
+                                                          <td colspan="5" class="text-end">Amount Paid:</td>
+                                                          <td colspan="2"><input type="number" class="form-control form-control-sm text-end" id="gstAmountPaid" value="0"></td>
+                                                      </tr>
+                                                      <tr>
+                                                          <td colspan="5" class="text-end fw-bold">Grand Total:</td>
+                                                          <td colspan="2" class="fw-bold text-primary" id="gstGrandTotal">₹0.00</td>
+                                                      </tr>
+                                                  </tfoot>
+                                              </table>
+                                          </div>
+                                        <button type="button" class="btn btn-outline-primary btn-sm" id="gstAddItemBtn"><i class="fas fa-plus me-1"></i>Add Item</button>
+
+                                        <div class="text-end mt-3">
+                                            <button type="button" class="btn btn-primary" id="saveGstBtn">Save GST Document</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="border rounded bg-white" style="height: 100%; min-height: 700px;">
+                                        <iframe id="gstPreviewFrame" style="border: none; width: 100%; height: 100%;" title="GST Preview"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: PAYMENTS -->
+                <div id="section-payments" class="main-section d-none">
+                    <div class="section-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                        <div>
+                            <h1 class="h2">Payments</h1>
+                            <div class="text-muted small">Track payment in and payment out.</div>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-primary" id="addPaymentInBtn">
+                                <i class="fas fa-arrow-down me-1"></i> Payment In
+                            </button>
+                            <button class="btn btn-outline-danger" id="addPaymentOutBtn">
+                                <i class="fas fa-arrow-up me-1"></i> Payment Out
+                            </button>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" id="paymentsViewBtn">
+                                    <i class="fas fa-exchange-alt me-1"></i> View: Payment In
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><button class="dropdown-item active" id="paymentInToggle" type="button">Payment In</button></li>
+                                    <li><button class="dropdown-item" id="paymentOutToggle" type="button">Payment Out</button></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-download me-1"></i> Export
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><button class="dropdown-item" id="exportPaymentInCsvBtn"><i class="fas fa-file-csv me-2"></i>Payment In CSV</button></li>
+                                    <li><button class="dropdown-item" id="exportPaymentOutCsvBtn"><i class="fas fa-file-csv me-2"></i>Payment Out CSV</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-tabs mb-3 d-none" id="paymentsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="payment-in-tab" data-bs-toggle="tab" data-bs-target="#paymentInPane" type="button" role="tab">Payment In</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="payment-out-tab" data-bs-toggle="tab" data-bs-target="#paymentOutPane" type="button" role="tab">Payment Out</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="paymentsTabContent">
+                        <div class="tab-pane fade show active" id="paymentInPane" role="tabpanel">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Search</label>
+                                            <input type="text" class="form-control" id="paymentInSearch" placeholder="Search customer, ref...">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Mode</label>
+                                            <select class="form-select" id="paymentInMode">
+                                                <option value="all">All Modes</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="UPI">UPI</option>
+                                                <option value="Bank">Bank</option>
+                                                <option value="Cheque">Cheque</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">From</label>
+                                            <input type="date" class="form-control" id="paymentInFrom">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">To</label>
+                                            <input type="date" class="form-control" id="paymentInTo">
+                                        </div>
+                                        <div class="col-md-1 d-grid">
+                                            <button class="btn btn-outline-secondary" id="resetPaymentInFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <small class="text-muted">Total Payment In</small>
+                                        <span class="fw-bold text-success" id="paymentInTotal">â‚¹0</span>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="paymentInTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Customer</th>
+                                                    <th>Mode</th>
+                                                    <th>Reference</th>
+                                                    <th>Description</th>
+                                                    <th class="text-end">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="paymentOutPane" role="tabpanel">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Search</label>
+                                            <input type="text" class="form-control" id="paymentOutSearch" placeholder="Search supplier, ref...">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Mode</label>
+                                            <select class="form-select" id="paymentOutMode">
+                                                <option value="all">All Modes</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="UPI">UPI</option>
+                                                <option value="Bank">Bank</option>
+                                                <option value="Cheque">Cheque</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">From</label>
+                                            <input type="date" class="form-control" id="paymentOutFrom">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">To</label>
+                                            <input type="date" class="form-control" id="paymentOutTo">
+                                        </div>
+                                        <div class="col-md-1 d-grid">
+                                            <button class="btn btn-outline-secondary" id="resetPaymentOutFilters" title="Reset Filters"><i class="fas fa-undo"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <small class="text-muted">Total Payment Out</small>
+                                        <span class="fw-bold text-danger" id="paymentOutTotal">â‚¹0</span>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="paymentOutTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Supplier</th>
+                                                    <th>Mode</th>
+                                                    <th>Reference</th>
+                                                    <th>Description</th>
+                                                    <th class="text-end">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment In Select Modal -->
+                <div class="modal fade" id="paymentInSelectModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Select Invoice</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Invoice</label>
+                                    <select class="form-select" id="paymentInInvoiceSelect">
+                                        <option value="">Loading...</option>
+                                    </select>
+                                    <div class="form-text">Only unpaid/partial invoices are listed.</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button class="btn btn-primary" id="confirmPaymentInSelect">Continue</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Out Select Modal -->
+                <div class="modal fade" id="paymentOutSelectModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Select Supplier</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Supplier</label>
+                                    <select class="form-select" id="paymentOutSupplierSelect">
+                                        <option value="">Loading...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button class="btn btn-danger" id="confirmPaymentOutSelect">Continue</button>
                             </div>
                         </div>
                     </div>
@@ -1303,9 +2289,33 @@
                                                 <input type="text" class="form-control" id="companyUpiId" placeholder="username@bank">
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Business Email</label>
-                                                <input type="email" class="form-control" id="companyEmail">
+                                                <label class="form-label">Default GST %</label>
+                                                <input type="number" class="form-control" id="companyGstRate" step="0.01" value="18">
                                             </div>
+                                              <div class="col-md-6">
+                                                  <label class="form-label">Invoice Prefix</label>
+                                                  <input type="text" class="form-control" id="invoicePrefix" placeholder="e.g. 2026">
+                                              </div>
+                                              <div class="col-md-6">
+                                                  <label class="form-label">Invoice Padding</label>
+                                                  <input type="number" class="form-control" id="invoicePad" value="4" min="2" max="10">
+                                              </div>
+                                              <div class="col-md-6">
+                                                  <label class="form-label">GST Doc Prefix</label>
+                                                  <input type="text" class="form-control" id="gstInvoicePrefix" placeholder="e.g. GST/2026">
+                                              </div>
+                                              <div class="col-md-6">
+                                                  <label class="form-label">GST Doc Padding</label>
+                                                  <input type="number" class="form-control" id="gstInvoicePad" value="4" min="2" max="10">
+                                              </div>
+                                              <div class="col-md-6">
+                                                  <label class="form-label">GST Next Number</label>
+                                                  <input type="number" class="form-control" id="gstInvoiceNextNumber" value="1" min="1">
+                                              </div>
+                                              <div class="col-md-6">
+                                                  <label class="form-label">Business Email</label>
+                                                  <input type="email" class="form-control" id="companyEmail">
+                                              </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Business Phone</label>
                                                 <input type="text" class="form-control" id="companyPhone">
@@ -1323,8 +2333,51 @@
                                                 <input type="text" class="form-control" id="companyState">
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">Zip Code</label>
+                                                <label class="form-label">Pincode</label>
                                                 <input type="text" class="form-control" id="companyZip">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Village</label>
+                                                <select class="form-select" id="companyVillage">
+                                                    <option value="">Select Village</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">District</label>
+                                                <input type="text" class="form-control" id="companyDistrict">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Mandal</label>
+                                                <select class="form-select" id="companyMandal">
+                                                    <option value="">Select Mandal</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-12"><hr class="my-2"></div>
+                                            <h6 class="fw-bold text-secondary mb-0">Bank Details</h6>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label">Account Holder Name</label>
+                                                <input type="text" class="form-control" id="companyBankAccountName" placeholder="Account holder">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Account Number</label>
+                                                <input type="text" class="form-control" id="companyBankAccountNo" placeholder="Account number">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">IFSC Code</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="companyBankIfsc" placeholder="IFSC">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="window.open('https://www.rbi.org.in/Scripts/IFSCMICRDetails.aspx','_blank')">Find IFSC</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Bank Name</label>
+                                                <input type="text" class="form-control" id="companyBankName" placeholder="Bank name">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Branch</label>
+                                                <input type="text" class="form-control" id="companyBankBranch" placeholder="Branch">
                                             </div>
                                             
                                             <div class="col-12"><hr class="my-2"></div>
@@ -1456,80 +2509,6 @@
         </div>
     </div>
 
-    <!-- Inventory Modal -->
-    <div class="modal fade" id="inventoryModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Add Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="inventoryForm">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Item Name</label>
-                                <input type="text" class="form-control" id="name" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">SKU</label>
-                                <input type="text" class="form-control" id="sku">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Category</label>
-                                <select class="form-select" id="category">
-                                    <option value="RCC Pipes">RCC Pipes</option>
-                                    <option value="Septic Tank Products">Septic Tank Products</option>
-                                    <option value="Moulds & Equipment">Moulds & Equipment</option>
-                                    <option value="Tools & Handling">Tools & Handling</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Unit</label>
-                                <input type="text" class="form-control" id="unit" value="piece">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" value="0" readonly>
-                                <div class="form-text">Stock is added only from production.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Reorder Level</label>
-                                <input type="number" class="form-control" id="reorderLevel" value="10">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Cost Price (₹)</label>
-                                <input type="number" class="form-control" id="costPrice" step="0.01">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Selling Price (₹)</label>
-                                <input type="number" class="form-control" id="sellingPrice" step="0.01">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" id="description" rows="2"></textarea>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Supplier</label>
-                                <select class="form-select" id="supplier">
-                                    <option value="">Select Supplier...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Location</label>
-                                <input type="text" class="form-control" id="location">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveItemBtn">Save Item</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Raw Material Modal -->
     <div class="modal fade" id="rawMaterialModal" tabindex="-1">
         <div class="modal-dialog">
@@ -1545,31 +2524,58 @@
                             <input type="text" class="form-control" id="rmName" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Category</label>
-                                <select class="form-select" id="rmCategory">
-                                    <option value="Raw Materials">Raw Materials (General)</option>
-                                    <option value="Cement">Cement</option>
-                                    <option value="Sand">Sand</option>
-                                    <option value="Aggregate">Aggregate (Metal)</option>
-                                    <option value="Steel">Steel / Rebar</option>
-                                    <option value="Fly Ash">Fly Ash</option>
-                                    <option value="Admixtures">Admixtures</option>
-                                    <option value="Chemicals">Chemicals</option>
+                            <label class="form-label">Material Category</label>
+                            <select class="form-select" id="rmCategory">
+                                <option value="Cement">Cement</option>
+                                <option value="Sand">Sand</option>
+                                <option value="Dust">Dust</option>
+                                <option value="Aggregate">Aggregate</option>
+                                <option value="Steel">Steel</option>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Unit</label>
+                                <select class="form-select" id="rmUnit">
+                                    <option value="Bag">Bag</option>
+                                    <option value="Ton">Ton</option>
+                                    <option value="CFT">CFT</option>
+                                    <option value="Kg">Kg</option>
                                 </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Standard Rate (₹)</label>
+                                <input type="number" class="form-control" id="rmStandardRate" step="0.01">
+                            </div>
                         </div>
                         <div class="row g-2 mb-3">
-                            <div class="col-6"><label class="form-label">Quantity</label><input type="number" class="form-control" id="rmQuantity" value="0" readonly></div>
-                            <div class="col-6"><label class="form-label">Unit</label><input type="text" class="form-control" id="rmUnit" value="kg"></div>
-                        </div>
-                        <div class="form-text mb-3">Quantity increases only through supplier purchase entries.</div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-6"><label class="form-label">Reorder Level</label><input type="number" class="form-control" id="rmReorder" value="100"></div>
-                            <div class="col-6"><label class="form-label">Cost Price (₹)</label><input type="number" class="form-control" id="rmCost"></div>
+                            <div class="col-6">
+                                <label class="form-label">Minimum Stock Alert Level</label>
+                                <input type="number" class="form-control" id="rmReorder" value="100">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="rmQuantity" value="0" readonly>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Supplier</label>
+                            <label class="form-label">Supplier (Default Supplier)</label>
                             <select class="form-select" id="rmSupplier"></select>
                         </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Storage Location</label>
+                                <input type="text" class="form-control" id="rmLocation">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="rmStatus">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-text">Quantity increases only through supplier purchase entries.</div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -1634,8 +2640,24 @@
                                 <input type="text" class="form-control" id="customerState">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Zip</label>
+                                <label class="form-label">Pincode</label>
                                 <input type="text" class="form-control" id="customerZip">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Village</label>
+                                <select class="form-select" id="customerVillage">
+                                    <option value="">Select Village</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">District</label>
+                                <input type="text" class="form-control" id="customerDistrict">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mandal</label>
+                                <select class="form-select" id="customerMandal">
+                                    <option value="">Select Mandal</option>
+                                </select>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Services Interested In</label>
@@ -1662,188 +2684,73 @@
         </div>
     </div>
 
-    <!-- Project Modal -->
+    <!-- Order Modal -->
     <div class="modal fade" id="projectModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Project Details</h5>
+                    <h5 class="modal-title">Order Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="projectForm">
                         <div class="mb-3">
-                            <label class="form-label">Project Name</label>
+                            <label class="form-label">Order Name</label>
                             <input type="text" class="form-control" id="projectName" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Customer Name</label>
-                            <input type="text" class="form-control" id="customerName" required>
+                            <input type="text" class="form-control" id="projectCustomerName" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select class="form-select" id="projectStatus">
                                 <option value="Pending">Pending</option>
-                                <option value="In Progress">In Progress</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Dispatched">Dispatched</option>
                                 <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Value (₹)</label>
-                            <input type="number" class="form-control" id="projectValue">
-                        </div>
+    <label class="form-label">Order Date</label>
+    <input type="date" class="form-control" id="projectOrderDate">
+</div>
+<div class="mb-3">
+    <label class="form-label">Delivery Date</label>
+    <input type="date" class="form-control" id="projectDeliveryDate">
+</div>
+<div class="mb-3">
+    <label class="form-label">Notes</label>
+    <textarea class="form-control" id="projectNotes" rows="2"></textarea>
+</div>
+<div class="mb-3">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+        <label class="form-label mb-0">Order Items</label>
+        <button type="button" class="btn btn-sm btn-outline-primary" id="orderAddItemBtn">
+            <i class="fas fa-plus me-1"></i> Add Item
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle mb-2">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 45%;">Item</th>
+                    <th style="width: 15%;">Qty</th>
+                    <th style="width: 20%;">Price</th>
+                    <th style="width: 15%;">Total</th>
+                    <th style="width: 5%;"></th>
+                </tr>
+            </thead>
+            <tbody id="orderItemsContainer"></tbody>
+        </table>
+    </div>
+    <div class="text-end fw-semibold">Order Total: <span id="orderGrandTotal">₹0.00</span></div>
+</div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="saveProjectBtn">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Invoice Modal -->
-    <div class="modal fade" id="invoiceModal" tabindex="-1" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Invoice</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="invoiceForm">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Customer</label>
-                                <select class="form-select" id="invCustomerSelect" required>
-                                    <option value="">Select Customer...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Invoice Date</label>
-                                <input type="date" class="form-control" id="invDate" required>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <label class="form-label">Project (Optional)</label>
-                                <select class="form-select" id="invProjectSelect"></select>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <label class="form-label">Vehicle (Delivery)</label>
-                                <select class="form-select" id="invVehicle"></select>
-                            </div>
-                            <div class="col-md-6 mt-3">
-                                <label class="form-label">Driver Name</label>
-                                <input type="text" class="form-control" id="invDriver">
-                            </div>
-                        </div>
-                        
-                        <hr>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0">Items</h6>
-                            <button type="button" class="btn btn-sm btn-outline-primary" id="invAddItemBtn">
-                                <i class="fas fa-plus"></i> Add Item
-                            </button>
-                        </div>
-                        
-                        <div class="table-responsive mb-3">
-                            <table class="table table-bordered table-sm" id="invItemsTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 40%">Item</th>
-                                        <th style="width: 15%">Qty</th>
-                                        <th style="width: 20%">Price</th>
-                                        <th style="width: 20%">Total</th>
-                                        <th style="width: 5%"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="invItemsContainer"></tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="3" class="text-end">Transport Cost:</td>
-                                        <td colspan="2"><input type="number" class="form-control form-control-sm text-end" id="invTransportCost" value="0"></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-end">Amount Paid:</td>
-                                        <td colspan="2"><input type="number" class="form-control form-control-sm text-end" id="invAmountPaid" value="0"></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-end">Balance Due:</td>
-                                        <td colspan="2" class="text-end fw-bold text-danger" id="invBalance">₹0.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-end fw-bold">Grand Total:</td>
-                                        <td colspan="2" class="fw-bold text-primary" id="invGrandTotal">₹0.00</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Customer Signature</label>
-                            <div class="border rounded p-2 bg-light text-center">
-                                <canvas id="signaturePad" width="400" height="150" class="bg-white border shadow-sm" style="touch-action: none;"></canvas>
-                                <div class="mt-2 text-end">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="clearSignatureBtn"><i class="fas fa-eraser me-1"></i>Clear</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveInvoiceBtn">Create Invoice</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Invoice Settings Modal -->
-    <div class="modal fade" id="invoiceSettingsModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Select Invoice Design</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="card h-100 template-card border-primary" style="cursor: pointer;" onclick="window.selectTemplate('modern')" id="tpl_modern">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-bold text-primary">Modern Clean</h6>
-                                    <p class="small text-muted">Minimalist, plenty of whitespace, blue accents.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card h-100 template-card" style="cursor: pointer;" onclick="window.selectTemplate('corporate')" id="tpl_corporate">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-bold text-dark">Corporate Pro</h6>
-                                    <p class="small text-muted">Dark header, striped rows, professional look.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card h-100 template-card" style="cursor: pointer;" onclick="window.selectTemplate('elegant')" id="tpl_elegant">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-bold text-secondary" style="font-family: serif;">Elegant Serif</h6>
-                                    <p class="small text-muted">Classic typography, traditional layout.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card h-100 template-card" style="cursor: pointer;" onclick="window.selectTemplate('bold')" id="tpl_bold">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-bold text-danger">Bold Impact</h6>
-                                    <p class="small text-muted">High contrast, thick borders, strong headers.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <input type="hidden" id="selectedTemplate" value="modern">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveInvoiceSettingsBtn">Save Preference</button>
                 </div>
             </div>
         </div>
@@ -1971,46 +2878,70 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Stock In</h5>
+                    <h5 class="modal-title">Raw Material Purchase (Stock In)</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <h6 class="item-name mb-3"></h6>
-                    <div class="mb-3">
-                        <label class="form-label">Quantity to Add</label>
-                        <input type="number" class="form-control" id="stockInQuantity">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Purchase Date</label>
+                            <input type="date" class="form-control" id="stockInDate">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Supplier Name</label>
+                            <select class="form-select" id="stockInSupplier"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Invoice Number</label>
+                            <input type="text" class="form-control" id="stockInInvoice">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Vehicle Number</label>
+                            <input type="text" class="form-control" id="stockInVehicleNo">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Material Name</label>
+                            <input type="text" class="form-control" id="stockInMaterialName" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Quantity Received</label>
+                            <input type="number" class="form-control" id="stockInQuantity">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Unit</label>
+                            <select class="form-select" id="stockInUnit">
+                                <option value="Bag">Bag</option>
+                                <option value="Ton">Ton</option>
+                                <option value="CFT">CFT</option>
+                                <option value="Kg">Kg</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Rate per Unit</label>
+                            <input type="number" class="form-control" id="stockInCost">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Loading / Transport Charges (₹)</label>
+                            <input type="number" class="form-control" id="stockInTransportCost" value="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Total Amount (₹)</label>
+                            <input type="number" class="form-control" id="stockInTotal" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Received By</label>
+                            <input type="text" class="form-control" id="stockInReceivedBy">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Remarks</label>
+                            <input type="text" class="form-control" id="stockInRemarks">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Supplier Name</label>
-                        <select class="form-select" id="stockInSupplier"></select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Invoice Number</label>
-                        <input type="text" class="form-control" id="stockInInvoice">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Transport Cost (₹)</label>
-                        <input type="number" class="form-control" id="stockInTransportCost" value="0">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Cost per Unit</label>
-                        <input type="number" class="form-control" id="stockInCost">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">GST (%)</label>
-                        <input type="number" class="form-control" id="stockInGst" value="18" placeholder="e.g. 18">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Upload Invoice</label>
-                        <input type="file" class="form-control" id="stockInFile">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Reason/Source</label>
-                        <input type="text" class="form-control" id="stockInReason" value="Purchase">
-                    </div>
+                    <div class="form-text mt-2">Stock increases automatically after saving this purchase.</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="confirmStockInBtn">Confirm Stock In</button>
+                    <button type="button" class="btn btn-primary" id="confirmStockInBtn">Save Purchase</button>
                 </div>
             </div>
         </div>
@@ -2034,7 +2965,7 @@
                         <input type="text" class="form-control" id="stockOutReason" value="Project Use">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Project (Optional)</label>
+                        <label class="form-label">Order (Optional)</label>
                         <input type="text" class="form-control" id="stockOutProject">
                     </div>
                     <div class="mb-3">
@@ -2049,8 +2980,7 @@
                         <label class="form-label">Driver Name</label>
                         <input type="text" class="form-control" id="stockOutDriver">
                     </div>
-                </div>
-                <div class="modal-footer">
+                </div><div class="modal-footer">
                     <button type="button" class="btn btn-warning" id="confirmStockOutBtn">Confirm Stock Out</button>
                 </div>
             </div>
@@ -2062,54 +2992,46 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Production</h5>
+                    <h5 class="modal-title">New Production Run</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="productionForm">
-                        <div class="row g-3 mb-3">
-                            <div class="col-12">
-                                <label class="form-label fw-bold">Product</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-clipboard-list"></i></span>
-                                    <select class="form-select" id="recipeSelect">
-                                        <option value="">Select Product Definition...</option>
+                        <div class="modal-section">
+                            <div class="modal-section-title">Core Details</div>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Product Master</label>
+                                    <select class="form-select" id="prodProductMaster">
+                                        <option value="">Select Product Master...</option>
                                     </select>
-                                    <button class="btn btn-outline-danger" type="button" id="deleteRecipeBtn" title="Delete Selected Recipe"><i class="fas fa-trash"></i></button>
+                                    <div class="form-text">Select the product to start production.</div>
+                                    <div id="productDetails" class="form-text text-primary fw-bold mt-1"></div>
                                 </div>
-                                <div id="productDetails" class="form-text text-primary fw-bold mt-1"></div>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Stage</label>
-                                <select class="form-select" id="productionStage">
-                                    <option value="Planned">Planned</option>
-                                    <option value="Curing" selected>Curing</option>
-                                    <option value="Completed">Completed</option>
-                                </select>
-                            </div>
-                            <div class="col-md-8">
-                                <label class="form-label fw-bold">Finished Product</label>
-                                <select class="form-select" id="finishedGoodSelect" required></select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Quantity Made</label>
-                                <input type="number" class="form-control" id="produceQuantity" min="1" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Septic Allocation</label>
-                                <input type="number" class="form-control" id="internalUseQty" value="0" min="0">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Broken / Rejected</label>
-                                <input type="number" class="form-control" id="brokenQuantity" value="0" min="0">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Curing Days</label>
-                                <input type="number" class="form-control" id="curingDays" value="1" min="0">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Date</label>
-                                <input type="date" class="form-control" id="productionDate">
+                                <div class="col-md-4">
+                                    <label class="form-label">Mold Number</label>
+                                    <select class="form-select" id="prodMoldNumber"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Production Location (Casting Area)</label>
+                                    <select class="form-select" id="prodCastingLocation"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Quantity Made</label>
+                                    <input type="number" class="form-control" id="produceQuantity" min="1" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Production Date</label>
+                                    <input type="date" class="form-control" id="productionDate">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Supervisor</label>
+                                    <input type="text" class="form-control" id="productionSupervisor">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Remarks</label>
+                                    <input type="text" class="form-control" id="productionNotes">
+                                </div>
                             </div>
                         </div>
 
@@ -2124,28 +3046,12 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label">Supervisor</label>
-                                                <input type="text" class="form-control" id="productionSupervisor">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label">Moulds Used</label>
-                                                <input type="text" class="form-control" id="mouldsUsed" placeholder="Auto-filled from Product Master">
-                                            </div>
-                                            <div class="col-md-6">
                                                 <label class="form-label">Labour Cost (₹)</label>
                                                 <input type="number" class="form-control" id="labourCost" value="0">
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Power Cost (₹)</label>
                                                 <input type="number" class="form-control" id="powerCost" value="0">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label">Material Wastage (Kg/Est)</label>
-                                                <input type="number" class="form-control" id="wastageQuantity" value="0" min="0">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label">Notes</label>
-                                                <textarea class="form-control" id="productionNotes" rows="2"></textarea>
                                             </div>
                                         </div>
                                         <hr class="my-3">
@@ -2167,97 +3073,367 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-outline-info" id="createRecipeBtn">Save as Recipe</button>
-                    <div>
+                    <div class="text-muted small">Flow: Start → Curing → Ready Stock → (Optional) Septic Allocation</div>
+                    <div class="d-flex gap-2">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-success" id="saveProductionBtn">Complete Production</button>
+                        <button type="button" class="btn btn-success" id="saveProductionBtn">Start Production</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Product & Mould Master Modal -->
+    <!-- Product Master Modal -->
     <div class="modal fade" id="productMasterModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Mould & Product Master Setup</h5>
+                    <h5 class="modal-title">Product Master</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row h-100">
-                        <!-- Left: List -->
-                        <div class="col-md-4 border-end">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold mb-0">Defined Products</h6>
-                                <button class="btn btn-sm btn-outline-success" id="newProductBtn"><i class="fas fa-plus"></i> New</button>
+                    <form id="productMasterFormNew">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Product Category</label>
+                                <select class="form-select" id="pmCategoryNew">
+                                    <option value="RCC Pipe">RCC Pipe</option>
+                                    <option value="Septic Tank Product">Septic Tank Product</option>
+                                </select>
                             </div>
-                            <div class="list-group list-group-flush overflow-auto" id="productListContainer" style="max-height: 500px;">
-                                <!-- Populated by JS -->
+                            <div class="col-md-6">
+                                <label class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="pmNameNew" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Pipe Type</label>
+                                <select class="form-select" id="pmPipeTypeNew">
+                                    <option value="Plain End">Plain End</option>
+                                    <option value="Socket & Spigot">Socket & Spigot</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Load Class</label>
+                                <select class="form-select" id="pmLoadClassNew">
+                                    <option value="NP2">NP2</option>
+                                    <option value="NP3">NP3</option>
+                                    <option value="NP4">NP4</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Unit</label>
+                                <input type="text" class="form-control" id="pmUnitNew" value="Nos">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Cost Price (&#8377;)</label>
+                                <input type="number" class="form-control" id="pmCostPriceNew" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Selling Price (&#8377;)</label>
+                                <input type="number" class="form-control" id="pmSellingPriceNew" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">HSN/SAC</label>
+                                <input type="text" class="form-control" id="pmHsnNew" placeholder="Auto" maxlength="10">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">GST %</label>
+                                <input type="number" class="form-control" id="pmGstRateNew" step="0.01" value="18">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Standard Production Time (hours)</label>
+                                <input type="number" class="form-control" id="pmProdTimeNew" step="0.5">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Standard Curing Days</label>
+                                <input type="number" class="form-control" id="pmCuringDaysNew" value="7">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="pmStatusNew">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Product Image</label>
+                                <div id="productImageExisting" class="d-none mb-1 d-flex align-items-center justify-content-between border rounded p-1 bg-light">
+                                    <a href="#" target="_blank" id="productImageLink" class="text-decoration-none small text-truncate text-primary fw-bold" style="max-width: 80%;"><i class="fas fa-file-image me-1"></i>View Image</a>
+                                    <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="window.deleteProductImage()"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                                <input type="file" class="form-control" id="pmImageFile" accept="image/*">
+                                <div class="progress mt-2 d-none" id="pmImageProgressWrap" style="height: 8px;">
+                                    <div class="progress-bar" id="pmImageProgress" role="progressbar" style="width: 0%;">0%</div>
+                                </div>
+                                <div id="pmImageStatus" class="text-muted mt-1" style="font-size: 0.8rem;"></div>
+                                <input type="hidden" id="pmImageUrl">
                             </div>
                         </div>
-                        <!-- Right: Form -->
-                        <div class="col-md-8">
-                            <h6 class="fw-bold text-primary mb-3" id="pmModalTitle">New Product Definition</h6>
-                            <form id="productMasterForm">
-                                <div class="row g-3 mb-3">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Category</label>
-                                        <select class="form-select" id="pmCategory">
-                                            <option value="RCC Pipes">RCC Pipes</option>
-                                            <option value="Septic Tank Products">Septic Tank Products</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Pipe Type</label>
-                                        <select class="form-select" id="pmPipeType">
-                                            <option value="Plain End">Plain End (Collar Joint)</option>
-                                            <option value="Socket & Spigot">Socket & Spigot</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Load Class</label>
-                                        <select class="form-select" id="pmLoadClass">
-                                            <option value="NP2">NP2</option>
-                                            <option value="NP3">NP3</option>
-                                            <option value="NP4">NP4</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Septic Product Type</label>
-                                        <select class="form-select" id="pmSepticType">
-                                            <option value="Septic Tank Rings">Septic Tank Rings</option>
-                                            <option value="Bottom Slabs">Bottom Slabs</option>
-                                            <option value="Cover Slabs">Cover Slabs</option>
-                                            <option value="Complete Septic Tank Sets">Complete Septic Tank Sets</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Product Name</label>
-                                        <input type="text" class="form-control" id="pmName" placeholder="e.g. RCC Pipe NP3 Socket & Spigot">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Compatible Mould IDs</label>
-                                        <input type="text" class="form-control" id="pmMouldIds" placeholder="e.g. M001, M002">
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Linked Inventory Item (Finished Good)</label>
-                                        <select class="form-select" id="pmFinishedGood"></select>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="form-label fw-bold mb-0">Standard Material Consumption (Recipe)</label>
-                                    <button type="button" class="btn btn-sm btn-outline-primary" id="pmIngredientBtn"><i class="fas fa-plus"></i> Add Material</button>
-                                </div>
-                                <div id="pmIngredientsContainer" class="mb-3 p-2 bg-light rounded" style="max-height: 250px; overflow-y: auto;"></div>
-                                <div class="text-end">
-                                    <button type="button" class="btn btn-primary" id="saveProductMasterBtn">Save Definition</button>
-                                </div>
-                            </form>
-                        </div>
+                    </form>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm align-middle" id="productMasterTable">
+                            <thead class="table-light">
+                                <tr><th>Product</th><th>Image</th><th>Category</th><th>Price Summary</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="pmCreateBtn">Save Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mould Master Modal -->
+    <div class="modal fade" id="moldMasterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mould Master</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="moldMasterForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Mould ID / Number</label>
+                                <input type="text" class="form-control" id="mmId" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mould Type</label>
+                                <select class="form-select" id="mmType">
+                                    <option value="Pipe Mold">Pipe Mold</option>
+                                    <option value="Ring Mold">Ring Mold</option>
+                                    <option value="Slab Mold">Slab Mold</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Supported Product</label>
+                                <input type="text" class="form-control" id="mmProduct">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mould Status</label>
+                                <select class="form-select" id="mmStatus">
+                                    <option value="Available">Available</option>
+                                    <option value="In Production">In Production</option>
+                                    <option value="Under Maintenance">Under Maintenance</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Used Date</label>
+                                <input type="date" class="form-control" id="mmLastUsed">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Remarks</label>
+                                <input type="text" class="form-control" id="mmRemarks">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm align-middle" id="moldMasterTable">
+                            <thead class="table-light">
+                                <tr><th>Mould</th><th>Status</th><th>Product</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="mmCreateBtn">Save Mould</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Master Modal -->
+    <div class="modal fade" id="locationMasterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Location Master</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="locationMasterForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Location Name</label>
+                                <input type="text" class="form-control" id="lmName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Location Type</label>
+                                <select class="form-select" id="lmType">
+                                    <option value="Production Area">Production Area</option>
+                                    <option value="Curing Yard">Curing Yard</option>
+                                    <option value="Ready Stock Yard">Ready Stock Yard</option>
+                                    <option value="Septic Assembly Area">Septic Assembly Area</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Capacity (optional)</label>
+                                <input type="number" class="form-control" id="lmCapacity">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="lmStatus">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm align-middle" id="locationMasterTable">
+                            <thead class="table-light">
+                                <tr><th>Location</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="lmCreateBtn">Save Location</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move To Curing Modal -->
+    <div class="modal fade" id="moveToCuringModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Move To Curing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="moveToCuringForm">
+                        <div class="modal-section">
+                            <div class="modal-section-title">Curing Transfer</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Batch Number</label>
+                                    <input type="text" class="form-control" id="curingBatchId" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="curingQuantity" min="1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">From Location (Casting Area)</label>
+                                    <input type="text" class="form-control" id="curingFromLocation" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">To Location (Curing Yard)</label>
+                                    <select class="form-select" id="curingToLocation">
+                                        <option value="">Select Location...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Curing Start Date</label>
+                                    <input type="date" class="form-control" id="curingStartDate">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveMoveToCuringBtn">Move To Curing</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Curing Completed Modal -->
+    <div class="modal fade" id="curingCompleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Curing Completed</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="curingCompleteForm">
+                        <div class="modal-section">
+                            <div class="modal-section-title">Completion Details</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Batch Number</label>
+                                    <input type="text" class="form-control" id="completeBatchId" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Completion Date</label>
+                                    <input type="date" class="form-control" id="completeDate">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Passed Quantity</label>
+                                    <input type="number" class="form-control" id="completePassedQty" min="0">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Damaged Quantity</label>
+                                    <input type="number" class="form-control" id="completeDamagedQty" min="0" value="0">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Move To Location (Ready Stock Yard)</label>
+                                    <select class="form-select" id="completeReadyLocation">
+                                        <option value="">Select Location...</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="saveCuringCompleteBtn">Complete Curing</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Septic Allocation Modal -->
+    <div class="modal fade" id="septicAllocationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Septic Allocation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="septicAllocationForm">
+                        <div class="modal-section">
+                            <div class="modal-section-title">Allocation Details</div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Quantity Allocated</label>
+                                    <input type="number" class="form-control" id="septicAllocationQty" min="0" value="0">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Septic Location</label>
+                                    <select class="form-select" id="septicAllocationLocation">
+                                        <option value="">Select Location...</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Septic Product (Assembly)</label>
+                                    <select class="form-select" id="septicAllocationProduct">
+                                        <option value="">Select Septic Product...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-text mt-2">Available only after curing completion.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveSepticAllocationBtn">Save Allocation</button>
                 </div>
             </div>
         </div>
@@ -2538,41 +3714,89 @@
                             <input type="text" class="form-control" id="supplierName" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Supplier Type <span class="text-danger">*</span></label>
-                            <select class="form-select" id="supplierType" required>
-                                <option value="">Select Type...</option>
-                                <option value="Cement">Cement Supplier</option>
-                                <option value="Dust/Sand">Dust / Sand Supplier</option>
-                                <option value="Aggregate">Aggregate (Metal) Supplier</option>
-                                <option value="Steel">Steel / Rebar Supplier</option>
-                                <option value="Fly Ash">Fly Ash Supplier</option>
-                                <option value="Admixtures">Admixtures / Chemicals</option>
-                                <option value="Moulds/Equipment">Moulds & Equipment</option>
-                                <option value="Logistics">Logistics / Transport</option>
-                                <option value="General">General / Other</option>
-                            </select>
+                            <label class="form-label">Contact Person Name</label>
+                            <input type="text" class="form-control" id="supplierContact">
                         </div>
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label">Contact Person</label>
-                                <input type="text" class="form-control" id="supplierContact">
+                                <label class="form-label">Mobile Number</label>
+                                <input type="tel" class="form-control" id="supplierPhone">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Phone</label>
-                                <input type="text" class="form-control" id="supplierPhone">
+                                <label class="form-label">Alternate Mobile</label>
+                                <input type="tel" class="form-control" id="supplierAltPhone">
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" id="supplierEmail">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Address</label>
                             <textarea class="form-control" id="supplierAddress" rows="2"></textarea>
                         </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Pincode</label>
+                                <input type="text" class="form-control" id="supplierPincode">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Village</label>
+                                <select class="form-select" id="supplierVillage">
+                                    <option value="">Select Village</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">District</label>
+                                <input type="text" class="form-control" id="supplierDistrict">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Mandal</label>
+                                <select class="form-select" id="supplierMandal">
+                                    <option value="">Select Mandal</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" id="supplierState">
+                            </div>
+                        </div>
                         <div class="mb-3">
-                            <label class="form-label">GSTIN</label>
+                            <label class="form-label">GST Number (optional)</label>
                             <input type="text" class="form-control" id="supplierGstin">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Material Types Supplied</label>
+                            <select class="form-select" id="supplierMaterials" multiple>
+                                <option value="Cement">Cement</option>
+                                <option value="Sand">Sand</option>
+                                <option value="Dust">Dust</option>
+                                <option value="Aggregate">Aggregate</option>
+                                <option value="Steel">Steel</option>
+                            </select>
+                            <div class="form-text">Hold Ctrl/Cmd to select multiple.</div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Payment Terms</label>
+                                <select class="form-select" id="supplierPaymentTerms">
+                                    <option value="Cash">Cash</option>
+                                    <option value="Credit">Credit</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Credit Days</label>
+                                <input type="number" class="form-control" id="supplierCreditDays" value="0">
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="supplierStatus">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Notes</label>
+                                <input type="text" class="form-control" id="supplierNotes">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -2706,7 +3930,14 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Daily Wage (₹)</label>
+                            <label class="form-label">Payment Type</label>
+                            <select class="form-select" id="staffSalaryType">
+                                <option value="Daily">Daily Wage</option>
+                                <option value="Monthly">Monthly Salary</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount (₹)</label>
                             <input type="number" class="form-control" id="staffWage" required>
                         </div>
                     </form>
@@ -3065,6 +4296,33 @@
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
 
+    .inventory-thumb-link {
+        display: inline-flex;
+        width: 44px;
+        height: 44px;
+        align-items: center;
+        justify-content: center;
+    }
+    .inventory-thumb {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: #f8f9fa;
+    }
+    .inventory-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f3f5;
+        color: #6c757d;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
     /* Hero Logo Animation */
     .hero-logo-box {
         position: relative;
@@ -3097,6 +4355,139 @@
         background: white;
         border-radius: 50%;
         padding: 4px;
+    }
+
+    .section-actions .btn {
+        min-width: 170px;
+    }
+    .modal-section {
+        border: 1px solid rgba(13, 110, 253, 0.08);
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    .modal-section-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #0f172a;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+    .production-status-card {
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 14px;
+        padding: 16px;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+    .status-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+    .status-item {
+        padding: 12px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    .status-highlight {
+        background: rgba(13, 110, 253, 0.08);
+        border-color: rgba(13, 110, 253, 0.2);
+    }
+    .status-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+    .status-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .production-table thead th {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        background: #f8fafc;
+    }
+    .production-table tbody td {
+        vertical-align: middle;
+        padding-top: 0.7rem;
+        padding-bottom: 0.7rem;
+    }
+    .production-table tbody tr:hover {
+        background: rgba(15, 118, 110, 0.06);
+    }
+    .production-table .badge {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+    }
+    .production-table td:last-child {
+        white-space: nowrap;
+    }
+    #section-production .section-header {
+        margin-bottom: 1.25rem;
+    }
+    #section-production .section-actions .btn {
+        border-radius: 10px;
+        padding: 0.55rem 1rem;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+    #section-production .section-actions .btn-outline-secondary {
+        box-shadow: none;
+    }
+    #productionModal .modal-header,
+    #moveToCuringModal .modal-header,
+    #curingCompleteModal .modal-header,
+    #septicAllocationModal .modal-header {
+        background: linear-gradient(120deg, rgba(2, 132, 199, 0.08), rgba(15, 118, 110, 0.08));
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    }
+    #productionModal .modal-title,
+    #moveToCuringModal .modal-title,
+    #curingCompleteModal .modal-title,
+    #septicAllocationModal .modal-title {
+        font-weight: 700;
+        color: #0f172a;
+    }
+    #productionModal .modal-body,
+    #moveToCuringModal .modal-body,
+    #curingCompleteModal .modal-body,
+    #septicAllocationModal .modal-body {
+        padding: 1.25rem;
+    }
+    #productionModal .form-control,
+    #productionModal .form-select,
+    #moveToCuringModal .form-control,
+    #moveToCuringModal .form-select,
+    #curingCompleteModal .form-control,
+    #curingCompleteModal .form-select,
+    #septicAllocationModal .form-control,
+    #septicAllocationModal .form-select {
+        min-height: 42px;
+        border-radius: 10px;
+    }
+    #productionModal .modal-footer,
+    #moveToCuringModal .modal-footer,
+    #curingCompleteModal .modal-footer,
+    #septicAllocationModal .modal-footer {
+        border-top: 1px solid rgba(15, 23, 42, 0.08);
+        padding: 0.9rem 1.25rem;
+    }
+    .production-status-card .btn {
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-weight: 600;
     }
 
     /* Pulse Animation */
@@ -3155,6 +4546,31 @@
         
         #sidebarToggle i {
             color: white !important;
+        }
+
+        .section-actions .btn {
+            min-width: auto;
+        }
+        .status-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        #section-production .section-header {
+            gap: 0.75rem;
+        }
+        #section-production .section-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        #section-production .section-actions .btn {
+            width: 100%;
+        }
+        .production-table thead th,
+        .production-table tbody td {
+            padding: 0.55rem 0.6rem;
+            font-size: 0.82rem;
+        }
+        .production-status-card {
+            padding: 12px;
         }
 
         /* Mobile Hero */
@@ -3274,6 +4690,7 @@
     <!-- jsPDF & AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Firebase SDKs (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -3289,13 +4706,16 @@
     <script type="module" src="js/customers.js"></script>
     <script type="module" src="js/projects.js"></script>
     <script type="module" src="js/invoices.js"></script>
+    <script type="module" src="js/gst-billing.js"></script>
     <script type="module" src="js/settings.js"></script>
     <script type="module" src="js/production.js"></script>
+    <script type="module" src="js/production-masters.js"></script>
     <script type="module" src="js/profile.js"></script>
     <script type="module" src="js/vehicles.js"></script>
     <script type="module" src="js/suppliers.js"></script>
     <script type="module" src="js/staff.js"></script>
     <script type="module" src="js/profit-loss.js"></script>
+    <script type="module" src="js/payments.js"></script>
 
     <!-- Daily Vehicle Alert Script -->
     <script>
@@ -3372,9 +4792,10 @@
                             remoteConfig.fetchAndActivate().then(() => {
                                 const SERVICE_ID = remoteConfig.getValue('emailjs_service_id').asString();
                                 const TEMPLATE_ID = remoteConfig.getValue('emailjs_template_id').asString();
+                                const PUBLIC_KEY = remoteConfig.getValue('emailjs_public_key').asString();
                                 
-                                if (SERVICE_ID && TEMPLATE_ID) {
-                                    emailjs.send(SERVICE_ID, TEMPLATE_ID, emailParams)
+                                if (SERVICE_ID && TEMPLATE_ID && PUBLIC_KEY) {
+                                    emailjs.send(SERVICE_ID, TEMPLATE_ID, emailParams, PUBLIC_KEY)
                                         .then(() => {
                                             console.log('Daily alert email sent successfully');
                                             localStorage.setItem('pipepro_vehicle_alert_date', todayStr);
@@ -3382,6 +4803,12 @@
                                         .catch((err) => {
                                             console.error('Failed to send daily alert email.', err);
                                         });
+                                } else {
+                                    console.warn('EmailJS config missing', {
+                                        service: !!SERVICE_ID,
+                                        template: !!TEMPLATE_ID,
+                                        publicKey: !!PUBLIC_KEY
+                                    });
                                 }
                             }).catch(err => console.error('Error fetching Remote Config:', err));
                         }
@@ -3410,5 +4837,6 @@
             }
         });
     </script>
+
 </body>
 </html>
