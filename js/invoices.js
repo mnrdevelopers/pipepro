@@ -9,7 +9,11 @@ const invoiceSettingsBtn = document.getElementById('invoiceSettingsBtn');
 const saveInvoiceSettingsBtn = document.getElementById('saveInvoiceSettingsBtn');
 const invItemsContainer = document.getElementById('invItemsContainer');
 const invoicePreviewFrame = document.getElementById('invoicePreviewFrame');
-const invoiceCopySelect = document.getElementById('invoiceCopySelect');
+const invoiceCopySummary = document.getElementById('invoiceCopySummary');
+const invoiceCopyAll = document.getElementById('invoiceCopyAll');
+const invoiceCopyOriginal = document.getElementById('invoiceCopyOriginal');
+const invoiceCopyDuplicate = document.getElementById('invoiceCopyDuplicate');
+const invoiceCopyTriplicate = document.getElementById('invoiceCopyTriplicate');
 const invoiceLayoutSelect = document.getElementById('invoiceLayoutSelect');
 const printInvoicePreviewBtn = document.getElementById('printInvoicePreviewBtn');
 const invoiceFormContainer = document.getElementById('invoiceFormContainer');
@@ -291,9 +295,21 @@ function setupEventListeners() {
         });
     }
 
-    if (invoiceCopySelect) {
-        invoiceCopySelect.addEventListener('change', updateInvoicePreview);
+    if (invoiceCopyAll) {
+        invoiceCopyAll.addEventListener('change', () => {
+            const checked = invoiceCopyAll.checked;
+            if (invoiceCopyOriginal) invoiceCopyOriginal.checked = checked;
+            if (invoiceCopyDuplicate) invoiceCopyDuplicate.checked = checked;
+            if (invoiceCopyTriplicate) invoiceCopyTriplicate.checked = checked;
+            syncInvoiceCopySelection(true);
+        });
     }
+    [invoiceCopyOriginal, invoiceCopyDuplicate, invoiceCopyTriplicate]
+        .filter(Boolean)
+        .forEach(checkbox => {
+            checkbox.addEventListener('change', () => syncInvoiceCopySelection(true));
+        });
+    syncInvoiceCopySelection(false);
 
     if (printInvoicePreviewBtn) {
         printInvoicePreviewBtn.addEventListener('click', (e) => {
@@ -609,6 +625,43 @@ function getSelectedInvoiceLayout() {
     return localStorage.getItem('invoiceLayout') || 'original';
 }
 
+function getSelectedInvoiceCopies() {
+    const picks = [];
+    if (invoiceCopyOriginal?.checked) picks.push('Original');
+    if (invoiceCopyDuplicate?.checked) picks.push('Duplicate');
+    if (invoiceCopyTriplicate?.checked) picks.push('Triplicate');
+    if (!picks.length) return ['Original'];
+    return picks;
+}
+
+function getPrimaryInvoiceCopyLabel() {
+    return getSelectedInvoiceCopies()[0] || 'Original';
+}
+
+function syncInvoiceCopySelection(refreshPreview = false) {
+    const checkedCount = [invoiceCopyOriginal, invoiceCopyDuplicate, invoiceCopyTriplicate]
+        .filter(c => c?.checked)
+        .length;
+
+    if (checkedCount === 0 && invoiceCopyOriginal) {
+        invoiceCopyOriginal.checked = true;
+    }
+
+    const selected = getSelectedInvoiceCopies();
+    if (invoiceCopySummary) {
+        invoiceCopySummary.textContent = selected.length === 3
+            ? 'Original, Duplicate, Triplicate'
+            : selected.join(', ');
+    }
+
+    if (invoiceCopyAll) {
+        invoiceCopyAll.checked = selected.length === 3;
+        invoiceCopyAll.indeterminate = selected.length > 0 && selected.length < 3;
+    }
+
+    if (refreshPreview) updateInvoicePreview();
+}
+
 function toggleShipToFields() {
     const shipSame = document.getElementById('invShipSame');
     const disabled = shipSame ? shipSame.checked : true;
@@ -767,7 +820,7 @@ function buildInvoicePreviewData(company) {
     const driver = document.getElementById('invDriver')?.value || '';
     const transportCost = parseFloat(document.getElementById('invTransportCost')?.value || '0') || 0;
     const amountPaid = parseFloat(document.getElementById('invAmountPaid')?.value || '0') || 0;
-    const copyLabel = invoiceCopySelect?.value || 'Original';
+    const copyLabel = getPrimaryInvoiceCopyLabel();
     const shipTo = getShipToData();
 
     const items = [];
@@ -981,65 +1034,117 @@ async function generateInvoicePdf(templateHTML, filename) {
     iframe.style.position = 'fixed';
     iframe.style.left = '-10000px';
     iframe.style.top = '0';
-    iframe.style.width = '800px';
-    iframe.style.height = '1120px';
+    iframe.style.width = '900px';
+    iframe.style.height = '1300px';
     iframe.style.border = '0';
     document.body.appendChild(iframe);
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(templateHTML);
-    iframe.contentDocument.close();
 
-    await new Promise(resolve => {
-        iframe.onload = () => setTimeout(resolve, 300);
-    });
+    try {
+        iframe.contentDocument.open();
+        iframe.contentDocument.write(templateHTML);
+        iframe.contentDocument.close();
 
-    const images = Array.from(iframe.contentDocument.images || []);
-    await Promise.all(images.map(img => new Promise(res => {
-        if (img.complete) return res();
-        img.onload = () => res();
-        img.onerror = () => res();
-    })));
+        await new Promise(resolve => {
+            iframe.onload = () => setTimeout(resolve, 300);
+        });
 
-    const body = iframe.contentDocument.body;
-    const canvas = await window.html2canvas(body, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-    });
+        const images = Array.from(iframe.contentDocument.images || []);
+        await Promise.all(images.map(img => new Promise(res => {
+            if (img.complete) return res();
+            img.onload = () => res();
+            img.onerror = () => res();
+        })));
 
-    const pdf = new jsPDFRef('p', 'pt', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDFRef('p', 'pt', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const copyPages = Array.from(iframe.contentDocument.querySelectorAll('.invoice-copy-page'));
+        const targets = copyPages.length ? copyPages : [iframe.contentDocument.body];
 
-    let heightLeft = imgHeight;
-    let position = 0;
+        for (let i = 0; i < targets.length; i++) {
+            const canvas = await window.html2canvas(targets[i], {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const widthRatio = pageWidth / canvas.width;
+            const heightRatio = pageHeight / canvas.height;
+            const fitRatio = Math.min(widthRatio, heightRatio);
+            const drawWidth = canvas.width * fitRatio;
+            const drawHeight = canvas.height * fitRatio;
+            const offsetX = 0;
+            const offsetY = 0;
 
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+            if (i > 0) pdf.addPage();
+            pdf.addImage(imgData, 'PNG', offsetX, offsetY, drawWidth, drawHeight);
+        }
 
-    while (heightLeft > 0) {
-        position -= pageHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        pdf.save(filename);
+    } finally {
+        iframe.remove();
     }
-
-    pdf.save(filename);
-
-    iframe.remove();
 }
 
 function printInvoicePreview() {
     const doPrint = async () => {
         const company = await getCompanySettings();
         const data = buildInvoicePreviewData(company);
-        const templateHTML = getInvoiceTemplate(data.layoutKey, data);
+        const templateHTML = buildMultiCopyInvoiceHTML(data.layoutKey, data, getSelectedInvoiceCopies());
         await printInvoiceHtml(templateHTML);
     };
     doPrint();
+}
+
+function buildMultiCopyInvoiceHTML(layoutKey, baseData, copyLabels = ['Original']) {
+    const labels = Array.isArray(copyLabels) && copyLabels.length ? copyLabels : ['Original'];
+    if (labels.length === 1) {
+        return getInvoiceTemplate(layoutKey, { ...baseData, copyLabel: labels[0] });
+    }
+
+    const extractBetweenTags = (html, tag) => {
+        const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+        const match = html.match(regex);
+        return match ? match[1] : '';
+    };
+    const extractTitle = (html) => {
+        const match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+        return match ? match[1] : 'Invoice';
+    };
+
+    const docs = labels.map(label => getInvoiceTemplate(layoutKey, { ...baseData, copyLabel: label }));
+    const title = extractTitle(docs[0] || '');
+    const headContent = extractBetweenTags(docs[0] || '', 'head');
+    const pages = docs.map((html, idx) => `
+        <div class="invoice-copy-page${idx === docs.length - 1 ? ' last' : ''}">
+            ${extractBetweenTags(html, 'body') || html}
+        </div>
+    `).join('');
+
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>${title}</title>
+        ${headContent}
+        <style>
+            .invoice-copy-page { page-break-after: always; break-after: page; }
+            .invoice-copy-page.last { page-break-after: auto; break-after: auto; }
+        </style>
+    </head>
+    <body>${pages}</body>
+    </html>`;
+}
+
+function resolveCopyLabels(copySelection) {
+    if (Array.isArray(copySelection) && copySelection.length) return copySelection;
+    if (!copySelection || copySelection === 'Original') return ['Original'];
+    if (copySelection === 'All' || copySelection === 'All Copies') {
+        return ['Original', 'Duplicate', 'Triplicate'];
+    }
+    if (copySelection === 'Duplicate' || copySelection === 'Triplicate') return [copySelection];
+    return ['Original'];
 }
 
 async function loadInvoices() {
@@ -1089,7 +1194,8 @@ async function loadInvoices() {
                             <option value="clean-grid">Clean Grid</option>
                             <option value="print-optimized">Print Optimized</option>
                         </select>
-                        <select class="form-select form-select-sm d-inline-block ms-1" id="invCopy_${doc.id}" style="width: 120px;">
+                        <select class="form-select form-select-sm d-inline-block ms-1" id="invCopy_${doc.id}" style="width: 140px;">
+                            <option value="All">All Copies</option>
                             <option value="Original">Original</option>
                             <option value="Duplicate">Duplicate</option>
                             <option value="Triplicate">Triplicate</option>
@@ -1356,7 +1462,8 @@ async function saveInvoiceSettings() {
     } catch (e) { console.error(e); }
 }
 
-async function saveInvoice() {
+async function saveInvoice(options = {}) {
+    const { autoPrint = true } = options;
     const user = JSON.parse(localStorage.getItem('user'));
     const businessId = user.businessId || user.uid;
     const customer = document.getElementById('invCustomerSelect').value;
@@ -1385,6 +1492,9 @@ async function saveInvoice() {
     const poDateVal = document.getElementById('invPoDate').value;
     const shipTo = getShipToData();
     const balance = amount - amountPaid;
+    const selectedCopyLabels = autoPrint
+        ? ['Original', 'Duplicate', 'Triplicate']
+        : getSelectedInvoiceCopies();
 
     if (!customer || amount <= 0) {
         alert('Please fill in all fields correctly');
@@ -1462,6 +1572,7 @@ async function saveInvoice() {
         } catch (e) { console.error("Signature upload failed", e); }
     }
 
+    let createdInvoiceNo = '';
     try {
         const invoiceRef = db.collection('users').doc(businessId).collection('transactions').doc();
         const invoiceData = {
@@ -1504,6 +1615,7 @@ async function saveInvoice() {
             const pad = Number(settings.invoicePad ?? businessSettings.invoicePad ?? 4);
             const nextNum = Number(settings.invoiceNextNumber ?? 1);
             const invoiceNo = `${prefix}${String(nextNum).padStart(pad, '0')}`;
+            createdInvoiceNo = invoiceNo;
 
             const itemRefs = items.map(item => ({
                 item,
@@ -1551,6 +1663,56 @@ async function saveInvoice() {
             });
         }
         
+        if (autoPrint) {
+            const company = await getCompanySettings();
+            const dateStr = formatDate(new Date(dateVal));
+            const poDateStr = poDateVal ? formatDate(new Date(poDateVal)) : '';
+            const logoHtml = company.logoUrl
+                ? `<img src="${company.logoUrl}" style="max-height: 80px; max-width: 200px; margin-bottom: 10px;">`
+                : '<div class="invoice-title">INVOICE</div>';
+            const signatureHtml = company.signatureUrl
+                ? `<div style="text-align: right; margin-top: 30px;"><img src="${company.signatureUrl}" style="max-height: 60px; max-width: 150px;"><br><small>Authorized Signature</small></div>`
+                : `<div style="text-align: right; margin-top: 60px; border-top: 1px solid #ccc; display: inline-block; padding-top: 5px; width: 200px;">Authorized Signature</div>`;
+            const customerSignatureHtml = customerSignatureUrl
+                ? `<div style="text-align: left; margin-top: 30px;"><img src="${customerSignatureUrl}" style="max-height: 60px; max-width: 150px;"><br><small>Receiver's Signature</small></div>`
+                : '';
+            const layoutKey = getSelectedInvoiceLayout();
+            const printBaseData = {
+                id: invoiceRef.id,
+                invoiceNo: createdInvoiceNo,
+                copyLabel: selectedCopyLabels[0] || 'Original',
+                dateStr,
+                company,
+                customer,
+                customerAddress,
+                customerCity,
+                customerState,
+                customerZip,
+                customerVillage,
+                customerDistrict,
+                customerMandal: custMandal,
+                customerPhone,
+                customerTaxId,
+                shipTo,
+                items,
+                amount,
+                logoHtml,
+                signatureHtml,
+                customerSignatureHtml,
+                project,
+                status: balance <= 0 ? 'Paid' : (amountPaid > 0 ? 'Partial' : 'Pending'),
+                balance,
+                amountPaid,
+                transportCost,
+                vehicle,
+                driver,
+                poNumber,
+                poDate: poDateStr
+            };
+            const mergedTemplate = buildMultiCopyInvoiceHTML(layoutKey, printBaseData, selectedCopyLabels);
+            await printInvoiceHtml(mergedTemplate);
+        }
+
         showAlert('success', 'Invoice created successfully');
         loadInvoices();
         document.getElementById('invoiceForm').reset();
@@ -1596,7 +1758,10 @@ window.openPaymentHistory = async (id) => {
     document.getElementById('paymentForm').reset();
     document.getElementById('payDate').valueAsDate = new Date();
     
-    new bootstrap.Modal(paymentHistoryModal).show();
+    if (paymentHistoryModal) {
+        const modal = bootstrap.Modal.getOrCreateInstance(paymentHistoryModal);
+        modal.show();
+    }
 
     try {
         const doc = await db.collection('users').doc(businessId).collection('transactions').doc(id).get();
@@ -1637,12 +1802,24 @@ window.openPaymentHistory = async (id) => {
         if (tbody.innerHTML === '') {
             tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No payments recorded</td></tr>';
         }
-        if (paymentHistoryModal && !paymentHistoryModal.classList.contains('show')) {
-            const modal = bootstrap.Modal.getOrCreateInstance(paymentHistoryModal);
-            modal.show();
-        }
     } catch(e) { console.error(e); }
 };
+
+function closePaymentHistoryModal() {
+    if (!paymentHistoryModal) return;
+    const modal = bootstrap.Modal.getOrCreateInstance(paymentHistoryModal);
+    modal.hide();
+
+    // Defensive cleanup when backdrop gets stuck.
+    setTimeout(() => {
+        const anyOpenModal = document.querySelector('.modal.show');
+        if (!anyOpenModal) {
+            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('padding-right');
+        }
+    }, 250);
+}
 
 async function savePayment() {
     if (!currentPaymentInvoiceId) return;
@@ -1760,7 +1937,7 @@ async function savePayment() {
         });
 
         showAlert('success', 'Payment recorded');
-        window.openPaymentHistory(currentPaymentInvoiceId); // Refresh modal
+        closePaymentHistoryModal();
         loadInvoices(); // Refresh list
     } catch (e) {
         console.error(e);
@@ -1774,7 +1951,7 @@ async function savePayment() {
 // Premium Invoice Print Function
 window.printInvoiceFromList = (id, customer, amount, dateStr) => {
     const copySelect = document.getElementById(`invCopy_${id}`);
-    const copyLabel = copySelect?.value || 'Original';
+    const copyLabel = copySelect?.value || 'All';
     const rowLayoutSelect = document.getElementById(`invLayout_${id}`);
     const layoutKey = rowLayoutSelect?.value || getSelectedInvoiceLayout();
     window.printInvoice(id, customer, amount, dateStr, copyLabel, layoutKey, true);
@@ -1782,7 +1959,7 @@ window.printInvoiceFromList = (id, customer, amount, dateStr) => {
 
 window.downloadInvoicePdfFromList = (id, customer, amount, dateStr, btnEl) => {
     const copySelect = document.getElementById(`invCopy_${id}`);
-    const copyLabel = copySelect?.value || 'Original';
+    const copyLabel = copySelect?.value || 'All';
     const rowLayoutSelect = document.getElementById(`invLayout_${id}`);
     const layoutKey = rowLayoutSelect?.value || getSelectedInvoiceLayout();
     const stopIndicator = startRowDownloadIndicator(id);
@@ -1803,25 +1980,24 @@ window.downloadInvoicePdfFromList = (id, customer, amount, dateStr, btnEl) => {
 };
 
 window.printInvoice = async (id, customer, amount, dateStr, copyLabel = 'Original', layoutKey = 'corporate', autoPrint = true, downloadPdf = false, onDownloadDone = null) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const businessId = user.businessId || user.uid;
-    // Fetch company settings for the header
-    let company = { companyName: 'My Company', address: '', phone: '', email: '' };
     try {
-        const doc = await db.collection('users').doc(businessId).collection('settings').doc('business').get();
-        if (doc.exists) company = doc.data();
-    } catch(e) {}
+        const user = JSON.parse(localStorage.getItem('user'));
+        const businessId = user.businessId || user.uid;
 
-    // Fetch Invoice Items if available
-    let itemsHtml = '';
-    let itemsData = [{name: 'RCC Pipe Supply', quantity: 1, price: amount}];
-    let invoiceData = {};
-    try {
+        let company = { companyName: 'My Company', address: '', phone: '', email: '' };
+        try {
+            const doc = await db.collection('users').doc(businessId).collection('settings').doc('business').get();
+            if (doc.exists) company = doc.data();
+        } catch (e) {}
+
+        let itemsData = [{ name: 'RCC Pipe Supply', quantity: 1, price: amount }];
+        let invoiceData = {};
         const invDoc = await db.collection('users').doc(businessId).collection('transactions').doc(id).get();
         if (invDoc.exists) {
             invoiceData = invDoc.data();
             if (invoiceData.items) itemsData = invoiceData.items;
         }
+
         if (!invoiceData.customerAddress && invoiceData.customer) {
             const custSnap = await db.collection('users').doc(businessId)
                 .collection('customers')
@@ -1841,71 +2017,72 @@ window.printInvoice = async (id, customer, amount, dateStr, copyLabel = 'Origina
                 invoiceData.customerTaxId = c.taxId || '';
             }
         }
-        const items = itemsData;
-        itemsHtml = items.map(i => `
-            <tr><td>${i.name}</td><td>${i.quantity}</td><td style="text-align:right">₹${i.price}</td><td style="text-align:right">₹${i.quantity * i.price}</td></tr>
-        `).join('');
-    } catch(e) {}
 
-    // Logo & Signature HTML
-    const logoHtml = company.logoUrl 
-        ? `<img src="${company.logoUrl}" style="max-height: 80px; max-width: 200px; margin-bottom: 10px;">` 
-        : '<div class="invoice-title">INVOICE</div>';
-        
-    const signatureHtml = company.signatureUrl
-        ? `<div style="text-align: right; margin-top: 30px;"><img src="${company.signatureUrl}" style="max-height: 60px; max-width: 150px;"><br><small>Authorized Signature</small></div>`
-        : `<div style="text-align: right; margin-top: 60px; border-top: 1px solid #ccc; display: inline-block; padding-top: 5px; width: 200px;">Authorized Signature</div>`;
+        const logoHtml = company.logoUrl
+            ? `<img src="${company.logoUrl}" style="max-height: 80px; max-width: 200px; margin-bottom: 10px;">`
+            : '<div class="invoice-title">INVOICE</div>';
+        const signatureHtml = company.signatureUrl
+            ? `<div style="text-align: right; margin-top: 30px;"><img src="${company.signatureUrl}" style="max-height: 60px; max-width: 150px;"><br><small>Authorized Signature</small></div>`
+            : `<div style="text-align: right; margin-top: 60px; border-top: 1px solid #ccc; display: inline-block; padding-top: 5px; width: 200px;">Authorized Signature</div>`;
+        const customerSignatureHtml = invoiceData.customerSignature
+            ? `<div style="text-align: left; margin-top: 30px;"><img src="${invoiceData.customerSignature}" style="max-height: 60px; max-width: 150px;"><br><small>Receiver's Signature</small></div>`
+            : '';
+        const poDateStr = invoiceData.poDate
+            ? formatDate(invoiceData.poDate.toDate ? invoiceData.poDate.toDate() : new Date(invoiceData.poDate))
+            : '';
 
-    const customerSignatureHtml = invoiceData.customerSignature
-        ? `<div style="text-align: left; margin-top: 30px;"><img src="${invoiceData.customerSignature}" style="max-height: 60px; max-width: 150px;"><br><small>Receiver's Signature</small></div>`
-        : '';
+        const baseTemplateData = {
+            id,
+            invoiceNo: invoiceData.invoiceNo || '',
+            copyLabel: resolveCopyLabels(copyLabel)[0] || 'Original',
+            dateStr,
+            company,
+            customer,
+            customerAddress: invoiceData.customerAddress || '',
+            customerCity: invoiceData.customerCity || '',
+            customerState: invoiceData.customerState || '',
+            customerZip: invoiceData.customerZip || '',
+            customerVillage: invoiceData.customerVillage || '',
+            customerDistrict: invoiceData.customerDistrict || '',
+            customerMandal: invoiceData.customerMandal || '',
+            customerPhone: invoiceData.customerPhone || '',
+            customerTaxId: invoiceData.customerTaxId || '',
+            shipTo: invoiceData.shipTo || null,
+            items: itemsData,
+            amount,
+            logoHtml,
+            signatureHtml,
+            customerSignatureHtml,
+            project: invoiceData.project,
+            status: invoiceData.status,
+            balance: invoiceData.balance,
+            amountPaid: invoiceData.amountPaid || 0,
+            transportCost: invoiceData.transportCost || 0,
+            vehicle: invoiceData.vehicle || '',
+            driver: invoiceData.driver || '',
+            poNumber: invoiceData.poNumber || '',
+            poDate: poDateStr
+        };
 
-    const poDateStr = invoiceData.poDate
-        ? formatDate(invoiceData.poDate.toDate ? invoiceData.poDate.toDate() : new Date(invoiceData.poDate))
-        : '';
+        const selectedCopyLabels = resolveCopyLabels(copyLabel);
+        const templateHTML = buildMultiCopyInvoiceHTML(layoutKey || currentTemplate, baseTemplateData, selectedCopyLabels);
 
-    const templateHTML = getInvoiceTemplate(layoutKey || currentTemplate, {
-        id,
-        invoiceNo: invoiceData.invoiceNo || '',
-        copyLabel,
-        dateStr,
-        company,
-        customer,
-        customerAddress: invoiceData.customerAddress || '',
-        customerCity: invoiceData.customerCity || '',
-        customerState: invoiceData.customerState || '',
-        customerZip: invoiceData.customerZip || '',
-        customerVillage: invoiceData.customerVillage || '',
-        customerDistrict: invoiceData.customerDistrict || '',
-        customerMandal: invoiceData.customerMandal || '',
-        customerPhone: invoiceData.customerPhone || '',
-        customerTaxId: invoiceData.customerTaxId || '',
-        shipTo: invoiceData.shipTo || null,
-        items: itemsData,
-        amount,
-        logoHtml,
-        signatureHtml,
-        customerSignatureHtml,
-        project: invoiceData.project,
-        status: invoiceData.status,
-        balance: invoiceData.balance,
-        amountPaid: invoiceData.amountPaid || 0,
-        transportCost: invoiceData.transportCost || 0,
-        vehicle: invoiceData.vehicle || '',
-        driver: invoiceData.driver || '',
-        poNumber: invoiceData.poNumber || '',
-        poDate: poDateStr
-    });
-    if (downloadPdf) {
-        const safeId = (invoiceData.invoiceNo || id.substr(0, 6).toUpperCase()).replace(/[^a-z0-9-_]/gi, '_');
-        await generateInvoicePdf(templateHTML, `invoice_${safeId}.pdf`);
-        if (onDownloadDone) onDownloadDone('Saved');
-        return;
-    }
-    if (autoPrint) {
-        await printInvoiceHtml(templateHTML);
-    } else {
-        openInvoiceWindow(templateHTML);
+        if (downloadPdf) {
+            const safeId = (invoiceData.invoiceNo || id.substr(0, 6).toUpperCase()).replace(/[^a-z0-9-_]/gi, '_');
+            await generateInvoicePdf(templateHTML, `invoice_${safeId}.pdf`);
+            if (onDownloadDone) onDownloadDone('Saved');
+            return;
+        }
+
+        if (autoPrint) {
+            await printInvoiceHtml(templateHTML);
+        } else {
+            openInvoiceWindow(templateHTML);
+        }
+    } catch (e) {
+        console.error('Error printing/downloading invoice:', e);
+        showAlert('danger', 'Print/PDF failed. Please try again.');
+        if (downloadPdf && onDownloadDone) onDownloadDone('Failed');
     }
 };
 
@@ -3266,5 +3443,3 @@ function getInvoiceTemplate(type, data) {
 }
 
 window.getInvoiceTemplate = getInvoiceTemplate;
-  
-
