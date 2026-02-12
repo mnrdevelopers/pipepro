@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sspc-v3';
+const CACHE_VERSION = 'sspc-v4';
 const OFFLINE_URL = 'offline.html';
 
 const APP_SHELL = [
@@ -50,11 +50,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
+  if (!request.url.startsWith('http://') && !request.url.startsWith('https://')) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
+          if (!response || response.status !== 200) return response;
           const copy = response.clone();
           caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
           return response;
