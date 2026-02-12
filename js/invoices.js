@@ -2983,7 +2983,7 @@ const templateStyles = `
 // Template styles removed for standard invoice
 
 // Standard invoice template override (templates removed)
-function getInvoiceTemplate(type, data) {
+function getInvoiceTemplate(type, data = {}) {
     const {
         id, invoiceNo, copyLabel, dateStr, company, customer, customerAddress, customerCity, customerState, customerZip, customerVillage, customerDistrict, customerMandal, customerPhone, customerTaxId, shipTo, items, amount,
         signatureHtml, customerSignatureHtml, project,
@@ -2991,17 +2991,23 @@ function getInvoiceTemplate(type, data) {
         placeOfSupply, reverseCharge, taxMode, docType, transporter, ewayBill
     } = data;
 
-    const safe = (val) => (val === null || val === undefined || val === '') ? '-' : val;
-    const companyName = company.companyName || 'SSPC Business';
-    const gstin = company.taxId || company.gstin || '-';
-    const state = company.state || company.companyState || '-';
-    const phone = company.phone || company.companyPhone || '';
-    const email = company.email || company.companyEmail || '';
-    const address = company.address || company.companyAddress || '';
-    const city = company.city || company.companyCity || '';
-    const zip = company.zip || company.companyZip || '';
+    const safeCompany = company || {};
+    const safeItems = Array.isArray(items) ? items : [];
+    const safeId = id || 'INV';
+    const safeDateStr = dateStr || formatDate(new Date());
+    const safeAmount = Number(amount || 0);
 
-    const itemsRows = items.map((i, idx) => {
+    const safe = (val) => (val === null || val === undefined || val === '') ? '-' : val;
+    const companyName = safeCompany.companyName || 'SSPC Business';
+    const gstin = safeCompany.taxId || safeCompany.gstin || '-';
+    const state = safeCompany.state || safeCompany.companyState || '-';
+    const phone = safeCompany.phone || safeCompany.companyPhone || '';
+    const email = safeCompany.email || safeCompany.companyEmail || '';
+    const address = safeCompany.address || safeCompany.companyAddress || '';
+    const city = safeCompany.city || safeCompany.companyCity || '';
+    const zip = safeCompany.zip || safeCompany.companyZip || '';
+
+    const itemsRows = safeItems.map((i, idx) => {
         const qty = Number(i.quantity || 0);
         const price = Number(i.price || 0);
         const gstRate = Number(i.gstRate || 0);
@@ -3024,14 +3030,14 @@ function getInvoiceTemplate(type, data) {
         `;
     }).join('');
 
-    const itemsSubtotal = items.reduce((sum, i) => sum + (Number(i.price || 0) * Number(i.quantity || 0)), 0);
+    const itemsSubtotal = safeItems.reduce((sum, i) => sum + (Number(i.price || 0) * Number(i.quantity || 0)), 0);
     const transport = Number(transportCost || 0);
-    const grandTotal = Number(amount || (itemsSubtotal + transport));
+    const grandTotal = Number(safeAmount || (itemsSubtotal + transport));
     const received = Number(amountPaid || 0);
     const balanceDue = Number(balance ?? (grandTotal - received));
 
     const taxableAmount = itemsSubtotal;
-    const totalGstAmount = items.reduce((sum, i) => {
+    const totalGstAmount = safeItems.reduce((sum, i) => {
         const rate = Number(i.gstRate || 0);
         const lineTaxable = Number(i.price || 0) * Number(i.quantity || 0);
         return sum + (lineTaxable * rate / 100);
@@ -3068,11 +3074,11 @@ function getInvoiceTemplate(type, data) {
 
     const amountWords = `${toWords(Math.round(grandTotal))} Rupees Only`;
 
-    const upiQr = company.upiId
-        ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(`upi://pay?pa=${company.upiId}&pn=${encodeURIComponent(companyName)}&am=${grandTotal}&cu=INR`)}" alt="UPI QR">`
+    const upiQr = safeCompany.upiId
+        ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(`upi://pay?pa=${safeCompany.upiId}&pn=${encodeURIComponent(companyName)}&am=${grandTotal}&cu=INR`)}" alt="UPI QR">`
         : '';
 
-    const invoiceLabel = invoiceNo || id.substr(0,6).toUpperCase();
+    const invoiceLabel = invoiceNo || safeId.substr(0,6).toUpperCase();
     const pos = placeOfSupply || state;
     const docTitle = docType || 'Invoice';
     const taxModeValue = taxMode || 'CGST_SGST';
@@ -3105,7 +3111,7 @@ function getInvoiceTemplate(type, data) {
             </div>
         </div>
         <div class="logo-box">
-            ${company.logoUrl ? `<img src="${company.logoUrl}" alt="Logo">` : ''}
+            ${safeCompany.logoUrl ? `<img src="${safeCompany.logoUrl}" alt="Logo">` : ''}
             ${headerInvoiceMeta}
         </div>
     </div>`;
@@ -3248,23 +3254,23 @@ function getInvoiceTemplate(type, data) {
                     <div class="pay-qr">
                         <div class="muted">Scan to Pay</div>
                         ${upiQr || '<div class="muted">UPI QR not available</div>'}
-                        ${company.upiId ? `<div class="muted mt-1 upi-id">UPI: ${company.upiId}</div>` : ''}
+                        ${safeCompany.upiId ? `<div class="muted mt-1 upi-id">UPI: ${safeCompany.upiId}</div>` : ''}
                         <div class="upi-logo">
                             <img src="upilogos.png" alt="UPI Apps" />
                         </div>
                     </div>
                     <div class="pay-bank">
-                        <div><strong>Name:</strong> ${safe(company.bankName)}</div>
-                        <div><strong>Acc. Name:</strong> ${safe(company.bankAccountName)}</div>
-                        <div><strong>Acc. No:</strong> ${safe(company.bankAccountNo)}</div>
-                        <div><strong>IFSC:</strong> ${safe(company.bankIfsc)}</div>
-                        <div><strong>Branch:</strong> ${safe(company.bankBranch)}</div>
+                        <div><strong>Name:</strong> ${safe(safeCompany.bankName)}</div>
+                        <div><strong>Acc. Name:</strong> ${safe(safeCompany.bankAccountName)}</div>
+                        <div><strong>Acc. No:</strong> ${safe(safeCompany.bankAccountNo)}</div>
+                        <div><strong>IFSC:</strong> ${safe(safeCompany.bankIfsc)}</div>
+                        <div><strong>Branch:</strong> ${safe(safeCompany.bankBranch)}</div>
                     </div>
                 </div>
             </div>
             <div class="sign-box">
                 For: ${companyName}<br>
-                ${company.signatureUrl ? `<img src="${company.signatureUrl}" style="max-height:60px;"><br>` : ''}
+                ${safeCompany.signatureUrl ? `<img src="${safeCompany.signatureUrl}" style="max-height:60px;"><br>` : ''}
                 <span class="sign-line">Authorized Signatory</span>
             </div>
         </div>`;
