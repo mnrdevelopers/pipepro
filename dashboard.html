@@ -1490,11 +1490,30 @@
                                     <option value="clean-grid">Professional Clean Grid Layout</option>
                                     <option value="print-optimized">Professional Print Optimized Layout</option>
                                 </select>
-                                <select class="form-select form-select-sm" id="invoiceCopySelect" style="width: 160px;">
-                                    <option value="Original">Original</option>
-                                    <option value="Duplicate">Duplicate</option>
-                                    <option value="Triplicate">Triplicate</option>
-                                </select>
+                                <div class="dropdown" data-bs-auto-close="outside">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="invoiceCopyDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-copy me-1"></i><span id="invoiceCopySummary">Original</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end p-2" style="min-width: 220px;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="invoiceCopyAll">
+                                            <label class="form-check-label fw-semibold" for="invoiceCopyAll">All Copies</label>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input invoice-copy-checkbox" type="checkbox" value="Original" id="invoiceCopyOriginal" checked>
+                                            <label class="form-check-label" for="invoiceCopyOriginal">Original</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input invoice-copy-checkbox" type="checkbox" value="Duplicate" id="invoiceCopyDuplicate">
+                                            <label class="form-check-label" for="invoiceCopyDuplicate">Duplicate</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input invoice-copy-checkbox" type="checkbox" value="Triplicate" id="invoiceCopyTriplicate">
+                                            <label class="form-check-label" for="invoiceCopyTriplicate">Triplicate</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button class="btn btn-sm btn-outline-primary" id="printInvoicePreviewBtn"><i class="fas fa-print me-1"></i>Print Selected</button>
                             </div>
                         </div>
@@ -4867,25 +4886,3 @@
     <script src="js/pwa.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
