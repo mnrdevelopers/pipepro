@@ -64,7 +64,10 @@ if (form) {
             window.location.href = 'login.html?mode=auth';
         } catch (err) {
             console.error(err);
-            showAlert('danger', err.message || 'Access denied.');
+            const msg = err && err.code === 'permission-denied'
+                ? 'Owner gate is blocked by Firestore rules. Deploy updated rules and retry.'
+                : (err.message || 'Access denied.');
+            showAlert('danger', msg);
         } finally {
             submitBtn.disabled = false;
             const spinner = submitBtn.querySelector('.spinner-border');
