@@ -191,7 +191,7 @@
                                 <small class="text-muted">Customers</small>
                             </div>
                             <div class="col-6">
-                                <div class="stat-value text-success" id="monthlyRevenue">₹0</div>
+                                <div class="stat-value text-success" id="monthlyRevenue">&#8377;0</div>
                                 <small class="text-muted">Revenue</small>
                             </div>
                             <div class="col-6">
@@ -320,7 +320,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <div class="text-xs fw-bold text-info text-uppercase mb-1">Sales Today</div>
-                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashSalesToday">₹0</div>
+                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashSalesToday">&#8377;0</div>
                                                 <small class="text-muted">Paid invoices</small>
                                             </div>
                                             <div class="text-info"><i class="fas fa-receipt fa-2x"></i></div>
@@ -334,7 +334,7 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <div class="text-xs fw-bold text-warning text-uppercase mb-1">Pending Payments</div>
-                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashPendingPayments">₹0</div>
+                                                <div class="h5 mb-0 fw-bold text-gray-800" id="dashPendingPayments">&#8377;0</div>
                                                 <small class="text-muted">Invoices due</small>
                                             </div>
                                             <div class="text-warning"><i class="fas fa-hourglass-half fa-2x"></i></div>
@@ -557,7 +557,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs fw-bold text-success text-uppercase mb-1">Total Value</div>
-                                            <div class="h5 mb-0 fw-bold text-gray-800" id="inv_inventoryValue">₹0</div>
+                                            <div class="h5 mb-0 fw-bold text-gray-800" id="inv_inventoryValue">&#8377;0</div>
                                         </div>
                                         <div class="col-auto"><i class="fas fa-rupee-sign fa-2x text-gray-300"></i></div>
                                     </div>
@@ -733,7 +733,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs fw-bold text-success text-uppercase mb-1">Stock Value</div>
-                                            <div class="h5 mb-0 fw-bold text-gray-800" id="rm_totalValue">₹0</div>
+                                            <div class="h5 mb-0 fw-bold text-gray-800" id="rm_totalValue">&#8377;0</div>
                                         </div>
                                         <div class="col-auto"><i class="fas fa-rupee-sign fa-2x text-gray-300"></i></div>
                                     </div>
@@ -771,7 +771,7 @@
                                             <th>Supplier</th>
                                             <th>Quantity</th>
                                             <th>Reorder Level</th>
-                                            <th>Cost (₹)</th>
+                                            <th>Cost (&#8377;)</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -945,12 +945,21 @@
                                                     <th>Role</th>
                                                     <th>Days Present</th>
                                                     <th>Total Wages</th>
+                                                    <th>Paid</th>
+                                                    <th>Balance</th>
+                                                    <th>Status</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
                                             <tfoot class="table-light fw-bold">
-                                                <tr><td colspan="3" class="text-end">Total Payout:</td><td id="payrollTotalWages">₹0</td><td></td></tr>
+                                                                                                <tr>
+                                                    <td colspan="3" class="text-end">Total Payout:</td>
+                                                    <td id="payrollTotalWages">&#8377;0</td>
+                                                    <td id="payrollTotalPaid">&#8377;0</td>
+                                                    <td id="payrollTotalBalance">&#8377;0</td>
+                                                    <td colspan="2"></td>
+                                                </tr>
                                             </tfoot>
                                         </table>
                                     </div>
@@ -1327,7 +1336,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs fw-bold text-warning text-uppercase mb-1">Revenue</div>
-                                            <div class="h5 mb-0 fw-bold text-gray-800" id="cust_customerRevenue">₹0</div>
+                                            <div class="h5 mb-0 fw-bold text-gray-800" id="cust_customerRevenue">&#8377;0</div>
                                         </div>
                                         <div class="col-auto"><i class="fas fa-rupee-sign fa-2x text-gray-300"></i></div>
                                     </div>
@@ -1628,11 +1637,11 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="3" class="text-end">Balance Due:</td>
-                                                        <td colspan="2" class="text-end fw-bold text-danger" id="invBalance">â‚¹0.00</td>
+                                                        <td colspan="2" class="text-end fw-bold text-danger" id="invBalance">Ã¢â€šÂ¹0.00</td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="3" class="text-end fw-bold">Grand Total:</td>
-                                                        <td colspan="2" class="fw-bold text-primary" id="invGrandTotal">â‚¹0.00</td>
+                                                        <td colspan="2" class="fw-bold text-primary" id="invGrandTotal">Ã¢â€šÂ¹0.00</td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -1872,7 +1881,7 @@
                                                       </tr>
                                                       <tr>
                                                           <td colspan="5" class="text-end fw-bold">Grand Total:</td>
-                                                          <td colspan="2" class="fw-bold text-primary" id="gstGrandTotal">₹0.00</td>
+                                                          <td colspan="2" class="fw-bold text-primary" id="gstGrandTotal">&#8377;0.00</td>
                                                       </tr>
                                                   </tfoot>
                                               </table>
@@ -1977,7 +1986,7 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between mb-2">
                                         <small class="text-muted">Total Payment In</small>
-                                        <span class="fw-bold text-success" id="paymentInTotal">â‚¹0</span>
+                                        <span class="fw-bold text-success" id="paymentInTotal">Ã¢â€šÂ¹0</span>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover" id="paymentInTable">
@@ -2036,7 +2045,7 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between mb-2">
                                         <small class="text-muted">Total Payment Out</small>
-                                        <span class="fw-bold text-danger" id="paymentOutTotal">â‚¹0</span>
+                                        <span class="fw-bold text-danger" id="paymentOutTotal">Ã¢â€šÂ¹0</span>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover" id="paymentOutTable">
@@ -2133,7 +2142,7 @@
                             <div class="card pl-card pl-income">
                                 <div class="card-body">
                                     <div class="pl-label">Total Income</div>
-                                    <div class="pl-value" id="plTotalIncome">₹0</div>
+                                    <div class="pl-value" id="plTotalIncome">&#8377;0</div>
                                     <div class="pl-sub">Invoices + Payments</div>
                                 </div>
                             </div>
@@ -2142,7 +2151,7 @@
                             <div class="card pl-card pl-expense">
                                 <div class="card-body">
                                     <div class="pl-label">Total Expenses</div>
-                                    <div class="pl-value" id="plTotalExpenses">₹0</div>
+                                    <div class="pl-value" id="plTotalExpenses">&#8377;0</div>
                                     <div class="pl-sub">Purchases + Supplier + Vehicle</div>
                                 </div>
                             </div>
@@ -2151,7 +2160,7 @@
                             <div class="card pl-card pl-profit">
                                 <div class="card-body">
                                     <div class="pl-label">Net Profit</div>
-                                    <div class="pl-value" id="plNetProfit">₹0</div>
+                                    <div class="pl-value" id="plNetProfit">&#8377;0</div>
                                     <div class="pl-sub">Income - Expenses</div>
                                 </div>
                             </div>
@@ -2429,7 +2438,7 @@
                                             <div class="col-md-6">
                                                 <label class="form-label">Currency</label>
                                                 <select class="form-select" id="currency" disabled>
-                                                    <option value="INR" selected>Indian Rupee (₹)</option>
+                                                    <option value="INR" selected>Indian Rupee (&#8377;)</option>
                                                 </select>
                                             </div>
                                             <div class="col-12 mt-4 text-end">
@@ -2589,7 +2598,7 @@
                                 </select>
                             </div>
                             <div class="col-6">
-                                <label class="form-label">Standard Rate (₹)</label>
+                                <label class="form-label">Standard Rate (&#8377;)</label>
                                 <input type="number" class="form-control" id="rmStandardRate" step="0.01">
                             </div>
                         </div>
@@ -2790,7 +2799,7 @@
             <tbody id="orderItemsContainer"></tbody>
         </table>
     </div>
-    <div class="text-end fw-semibold">Order Total: <span id="orderGrandTotal">₹0.00</span></div>
+    <div class="text-end fw-semibold">Order Total: <span id="orderGrandTotal">&#8377;0.00</span></div>
 </div>
                     </form>
                 </div>
@@ -2831,7 +2840,7 @@
                     <form id="paymentForm">
                         <div class="row g-2">
                             <div class="col-6"><label class="form-label small">Date</label><input type="date" class="form-control form-control-sm" id="payDate" required></div>
-                            <div class="col-6"><label class="form-label small">Amount (₹)</label><input type="number" class="form-control form-control-sm" id="payAmount" required min="1"></div>
+                            <div class="col-6"><label class="form-label small">Amount (&#8377;)</label><input type="number" class="form-control form-control-sm" id="payAmount" required min="1"></div>
                             <div class="col-6"><label class="form-label small">Mode</label><select class="form-select form-select-sm" id="payMode"><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank Transfer</option><option value="Cheque">Cheque</option></select></div>
                             <div class="col-6"><label class="form-label small">Reference / Note</label><input type="text" class="form-control form-control-sm" id="payRef" placeholder="Txn ID / Cheque No"></div>
                         </div>
@@ -2862,7 +2871,7 @@
                         </div>
                         <div class="row g-2">
                             <div class="col-6"><label class="form-label">Date</label><input type="date" class="form-control" id="advDate" required></div>
-                            <div class="col-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="advAmount" required min="1"></div>
+                            <div class="col-6"><label class="form-label">Amount (&#8377;)</label><input type="number" class="form-control" id="advAmount" required min="1"></div>
                             <div class="col-6"><label class="form-label">Mode</label><select class="form-select" id="advMode"><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank Transfer</option><option value="Cheque">Cheque</option></select></div>
                             <div class="col-6"><label class="form-label">Reference</label><input type="text" class="form-control" id="advRef" placeholder="Txn ID"></div>
                         </div>
@@ -2909,7 +2918,7 @@
                             </thead>
                             <tbody></tbody>
                             <tfoot class="table-light fw-bold">
-                                <tr><td colspan="3" class="text-end">Totals:</td><td class="text-end" id="ledgerTotalDebit">₹0</td><td class="text-end" id="ledgerTotalCredit">₹0</td><td class="text-end" id="ledgerFinalBalance">₹0</td></tr>
+                                <tr><td colspan="3" class="text-end">Totals:</td><td class="text-end" id="ledgerTotalDebit">&#8377;0</td><td class="text-end" id="ledgerTotalCredit">&#8377;0</td><td class="text-end" id="ledgerFinalBalance">&#8377;0</td></tr>
                             </tfoot>
                         </table>
                     </div>
@@ -2967,11 +2976,11 @@
                             <input type="number" class="form-control" id="stockInCost">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Loading / Transport Charges (₹)</label>
+                            <label class="form-label">Loading / Transport Charges (&#8377;)</label>
                             <input type="number" class="form-control" id="stockInTransportCost" value="0">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Total Amount (₹)</label>
+                            <label class="form-label">Total Amount (&#8377;)</label>
                             <input type="number" class="form-control" id="stockInTotal" readonly>
                         </div>
                         <div class="col-md-6">
@@ -3091,11 +3100,11 @@
                                     <div class="accordion-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
-                                                <label class="form-label">Labour Cost (₹)</label>
+                                                <label class="form-label">Labour Cost (&#8377;)</label>
                                                 <input type="number" class="form-control" id="labourCost" value="0">
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label">Power Cost (₹)</label>
+                                                <label class="form-label">Power Cost (&#8377;)</label>
                                                 <input type="number" class="form-control" id="powerCost" value="0">
                                             </div>
                                         </div>
@@ -3109,7 +3118,7 @@
                                             <!-- Dynamic Rows -->
                                         </div>
                                         <div class="d-flex justify-content-end">
-                                             <h6 class="mb-0">Estimated Cost: <span class="text-primary fw-bold" id="estimatedCost">₹0.00</span></h6>
+                                             <h6 class="mb-0">Estimated Cost: <span class="text-primary fw-bold" id="estimatedCost">&#8377;0.00</span></h6>
                                         </div>
                                     </div>
                                 </div>
@@ -3118,7 +3127,7 @@
                     </form>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <div class="text-muted small">Flow: Start → Curing → Ready Stock → (Optional) Septic Allocation</div>
+                    <div class="text-muted small">Flow: Start â†’ Curing â†’ Ready Stock â†’ (Optional) Septic Allocation</div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-success" id="saveProductionBtn">Start Production</button>
@@ -3498,7 +3507,7 @@
                             <div class="card bg-success text-white">
                                 <div class="card-body">
                                     <h6>Total Net Profit (All Time)</h6>
-                                    <h3 id="prTotalProfit">₹0</h3>
+                                    <h3 id="prTotalProfit">&#8377;0</h3>
                                 </div>
                             </div>
                         </div>
@@ -3514,7 +3523,7 @@
                             <div class="card bg-warning text-dark">
                                 <div class="card-body">
                                     <h6>Outstanding Collections</h6>
-                                    <h3 id="prOutstanding">₹0</h3>
+                                    <h3 id="prOutstanding">&#8377;0</h3>
                                 </div>
                             </div>
                         </div>
@@ -3606,7 +3615,7 @@
                                 <input type="text" class="form-control" id="vehicleFastagId">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Current Fastag Balance (₹)</label>
+                                <label class="form-label">Current Fastag Balance (&#8377;)</label>
                                 <input type="number" class="form-control" id="vehicleFastagBalance" value="0">
                             </div>
 
@@ -3724,7 +3733,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Amount (₹)</label>
+                            <label class="form-label">Amount (&#8377;)</label>
                             <input type="number" class="form-control" id="expenseAmount" required>
                         </div>
                         <div class="mb-3">
@@ -3870,7 +3879,7 @@
                         </div>
                         <div class="row g-2">
                             <div class="col-6"><label class="form-label">Date</label><input type="date" class="form-control" id="spDate" required></div>
-                            <div class="col-6"><label class="form-label">Amount (₹)</label><input type="number" class="form-control" id="spAmount" required min="1"></div>
+                            <div class="col-6"><label class="form-label">Amount (&#8377;)</label><input type="number" class="form-control" id="spAmount" required min="1"></div>
                             <div class="col-6"><label class="form-label">Mode</label><select class="form-select" id="spMode"><option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank Transfer</option><option value="Cheque">Cheque</option></select></div>
                             <div class="col-6"><label class="form-label">Reference</label><input type="text" class="form-control" id="spRef" placeholder="Txn ID"></div>
                         </div>
@@ -3917,7 +3926,7 @@
                             </thead>
                             <tbody></tbody>
                             <tfoot class="table-light fw-bold">
-                                <tr><td colspan="3" class="text-end">Totals:</td><td class="text-end" id="slTotalPurchase">₹0</td><td class="text-end" id="slTotalPayment">₹0</td><td class="text-end" id="slFinalBalance">₹0</td></tr>
+                                <tr><td colspan="3" class="text-end">Totals:</td><td class="text-end" id="slTotalPurchase">&#8377;0</td><td class="text-end" id="slTotalPayment">&#8377;0</td><td class="text-end" id="slFinalBalance">&#8377;0</td></tr>
                             </tfoot>
                         </table>
                     </div>
@@ -3982,13 +3991,73 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Amount (₹)</label>
+                            <label class="form-label">Amount (&#8377;)</label>
                             <input type="number" class="form-control" id="staffWage" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="saveStaffBtn">Save Staff</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Salary Payment Modal -->
+    <div class="modal fade" id="salaryPaymentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Salary Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="salaryPaymentForm">
+                        <div class="mb-3">
+                            <label class="form-label">Staff Member</label>
+                            <select class="form-select" id="salaryStaffSelect" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Salary Month</label>
+                            <input type="month" class="form-control" id="salaryMonth" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Payable Amount (&#8377;)</label>
+                                <input type="number" class="form-control" id="salaryPayable" readonly>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Payment Amount (&#8377;)</label>
+                                <input type="number" class="form-control" id="salaryAmount" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Payment Date</label>
+                            <input type="date" class="form-control" id="salaryDate" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Mode</label>
+                                <select class="form-select" id="salaryMode">
+                                    <option value="Cash">Cash</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                    <option value="UPI">UPI</option>
+                                    <option value="Cheque">Cheque</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Reference</label>
+                                <input type="text" class="form-control" id="salaryReference" placeholder="UTR / Cheque no">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" id="salaryNotes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveSalaryPaymentBtn">Save Payment</button>
                 </div>
             </div>
         </div>
@@ -4079,7 +4148,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Wage for Day (₹)</label>
+                            <label class="form-label">Wage for Day (&#8377;)</label>
                             <input type="number" class="form-control" id="manualWage" required>
                         </div>
                     </form>
