@@ -374,6 +374,19 @@ function setupEventListeners() {
     if (custSelect && projectSelect) {
         custSelect.addEventListener('change', () => {
             const selectedCustomer = custSelect.value;
+            if (selectedCustomer === '__add_customer__') {
+                custSelect.value = '';
+                if (window.showAddCustomerModal) {
+                    window.showAddCustomerModal();
+                } else {
+                    const customerModal = document.getElementById('customerModal');
+                    if (customerModal) {
+                        const modal = new bootstrap.Modal(customerModal);
+                        modal.show();
+                    }
+                }
+                return;
+            }
             Array.from(projectSelect.options).forEach(opt => {
                 if (opt.value === "") return;
                 const projectCustomer = opt.getAttribute('data-customer');
@@ -400,6 +413,48 @@ function setupEventListeners() {
     }
 
     updateInvoicePreview();
+}
+
+async function reloadInvoiceCustomers(selectName = '') {
+    const custSelect = document.getElementById('invCustomerSelect');
+    if (!custSelect) return;
+    const user = JSON.parse(localStorage.getItem('user'));
+    const businessId = user?.businessId || user?.uid;
+    if (!businessId) return;
+
+    custSelect.innerHTML = '<option value="">Loading...</option>';
+    try {
+        const custSnap = await db.collection('users').doc(businessId)
+            .collection('customers').orderBy('name').get();
+        custSelect.innerHTML = '<option value="">Select Customer...</option>';
+        custSnap.forEach(doc => {
+            const c = doc.data();
+            const balText = c.outstandingBalance < 0 ? ` (Credit: ₹${Math.abs(c.outstandingBalance)})` : '';
+            custSelect.innerHTML += `
+                <option value="${c.name}"
+                    data-balance="${c.outstandingBalance || 0}"
+                    data-address="${(c.address || '').replace(/"/g, '&quot;')}"
+                    data-city="${(c.city || '').replace(/"/g, '&quot;')}"
+                    data-state="${(c.state || '').replace(/"/g, '&quot;')}"
+                    data-zip="${(c.zip || '').replace(/"/g, '&quot;')}"
+                    data-village="${(c.village || '').replace(/"/g, '&quot;')}"
+                    data-district="${(c.district || '').replace(/"/g, '&quot;')}"
+                    data-mandal="${(c.mandal || '').replace(/"/g, '&quot;')}"
+                    data-phone="${(c.phone || '').replace(/"/g, '&quot;')}"
+                    data-taxid="${(c.taxId || '').replace(/"/g, '&quot;')}"
+                >${c.name}${balText}</option>
+            `;
+        });
+        custSelect.innerHTML += '<option value="__add_customer__">+ Add Customer...</option>';
+        if (selectName) {
+            custSelect.value = selectName;
+            custSelect.dispatchEvent(new Event('change'));
+        }
+    } catch (e) {
+        console.error(e);
+        custSelect.innerHTML = '<option value="">Select Customer...</option>';
+        custSelect.innerHTML += '<option value="__add_customer__">+ Add Customer...</option>';
+    }
 }
 
 window.openInvoiceModalWithOrder = async (order) => {
@@ -457,6 +512,7 @@ async function openInvoiceModal(options = {}) {
                 >${c.name}${balText}</option>
             `;
         });
+        custSelect.innerHTML += '<option value="__add_customer__">+ Add Customer...</option>';
         
         vehicleSelect.innerHTML = '<option value="">Select Vehicle...</option>';
         vehicleSnap.forEach(doc => {
@@ -518,6 +574,11 @@ async function openInvoiceModal(options = {}) {
         alert("Error loading data");
     }
 }
+
+window.addEventListener('customerCreated', (e) => {
+    const name = e?.detail?.name || '';
+    reloadInvoiceCustomers(name);
+});
 
 function addInvoiceItemRow(prefill = {}) {
     const defaultGst = Number(businessSettings.gstRate || 0);
