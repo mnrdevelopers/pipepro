@@ -449,7 +449,16 @@ function printGstPreview() {
 }
 
 function printGstDocument(docData) {
-    const payload = { ...docData, copyLabel: docData.copyLabel || 'ORIGINAL' };
+    const docDate = docData?.date?.toDate ? docData.date.toDate() : new Date(docData?.date || Date.now());
+    const payload = {
+        ...docData,
+        id: docData?.id || docData?.docNo || 'GST',
+        invoiceNo: docData?.invoiceNo || docData?.docNo || docData?.id || '',
+        dateStr: docData?.dateStr || formatDate(docDate),
+        customer: docData?.customer || docData?.customerName || '',
+        company: { ...(companyCache || {}), ...(docData?.company || {}) },
+        copyLabel: docData?.copyLabel || 'ORIGINAL'
+    };
     const html = window.getInvoiceTemplate('original', payload);
     const printFrame = document.createElement('iframe');
     printFrame.style.position = 'fixed';
