@@ -378,6 +378,8 @@ function showAddCustomerModal() {
     modal.show();
 }
 
+window.showAddCustomerModal = showAddCustomerModal;
+
 // Show Edit Customer Modal
 function showEditCustomerModal(customer) {
     currentCustomerId = customer.id;
@@ -485,6 +487,9 @@ async function saveCustomer() {
                 .collection('customers')
                 .add(customerData);
             
+            window.dispatchEvent(new CustomEvent('customerCreated', {
+                detail: { name: customerData.name }
+            }));
             showSuccess('Customer added successfully!');
         }
         
@@ -1193,4 +1198,3 @@ function showError(message) {
 
 // Export functions
 export { loadCustomers, showAddCustomerModal, viewCustomerDetails };
-
