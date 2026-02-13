@@ -13,6 +13,17 @@ const manualAttendanceBtn = document.getElementById('manualAttendanceBtn');
 const saveManualAttendanceBtn = document.getElementById('saveManualAttendanceBtn');
 const payrollMonthFilter = document.getElementById('payrollMonthFilter');
 const payrollTable = document.getElementById('payrollTable');
+const salaryPaymentModal = document.getElementById('salaryPaymentModal');
+const saveSalaryPaymentBtn = document.getElementById('saveSalaryPaymentBtn');
+const salaryPaymentForm = document.getElementById('salaryPaymentForm');
+const salaryStaffSelect = document.getElementById('salaryStaffSelect');
+const salaryMonth = document.getElementById('salaryMonth');
+const salaryPayable = document.getElementById('salaryPayable');
+const salaryAmount = document.getElementById('salaryAmount');
+const salaryDate = document.getElementById('salaryDate');
+const salaryMode = document.getElementById('salaryMode');
+const salaryReference = document.getElementById('salaryReference');
+const salaryNotes = document.getElementById('salaryNotes');
 const exportPayrollCsvBtn = document.getElementById('exportPayrollCsvBtn');
 const exportPayrollPdfBtn = document.getElementById('exportPayrollPdfBtn');
 const exportStaffCsvBtn = document.getElementById('exportStaffCsvBtn');
@@ -29,6 +40,7 @@ let currentStaffId = null;
 let staffListCache = [];
 let currentPayrollData = [];
 let currentPayrollMonth = '';
+let currentPayrollPayments = {};
 
 function normalizeMobile(value) {
     return (value || '').replace(/\D/g, '');
@@ -98,6 +110,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         saveManualAttendanceBtn.addEventListener('click', saveManualAttendance);
     }
 
+    if (saveSalaryPaymentBtn) {
+        saveSalaryPaymentBtn.addEventListener('click', saveSalaryPayment);
+    }
+
+    if (salaryStaffSelect) {
+        salaryStaffSelect.addEventListener('change', updateSalaryPaymentFields);
+    }
+
     if (exportPayrollCsvBtn) {
         exportPayrollCsvBtn.addEventListener('click', exportPayrollCSV);
     }
@@ -159,7 +179,7 @@ async function loadStaff() {
             const s = doc.data();
             const canDelete = user.permissions ? user.permissions.canDelete : true;
             const escape = (str) => (str || '').replace(/'/g, "\\'");
-            const wageDisplay = s.wageType === 'Monthly' ? `₹${(s.amount || s.dailyWage).toLocaleString()}<small class="text-muted">/mo</small>` : `₹${(s.amount || s.dailyWage)}<small class="text-muted">/day</small>`;
+            const wageDisplay = s.wageType === 'Monthly' ? `\u20B9${(s.amount || s.dailyWage).toLocaleString()}<small class="text-muted">/mo</small>` : `\u20B9${(s.amount || s.dailyWage)}<small class="text-muted">/day</small>`;
             
             tbody.innerHTML += `
                 <tr>
@@ -341,7 +361,7 @@ async function loadAttendance() {
                     <td>${time}</td>
                     <td class="fw-bold">${a.staffName}</td>
                     <td>${a.role}</td>
-                    <td class="text-success">₹${a.wageEarned}</td>
+                    <td class="text-success">\u20B9${a.wageEarned}</td>
                     <td><span class="badge bg-success">Present</span></td>
                     <td>
                         ${canDelete ? `<button class="btn btn-sm btn-outline-danger" onclick="window.deleteAttendance('${doc.id}')"><i class="fas fa-trash"></i></button>` : ''}
@@ -450,7 +470,7 @@ async function loadPayroll() {
     const endDate = `${year}-${month}-${lastDay}`;
 
     const tbody = payrollTable.querySelector('tbody');
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center">Calculating...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="text-center">Calculating...</td></tr>';
 
     try {
         const snapshot = await db.collection('users').doc(businessId).collection('attendance')
@@ -475,23 +495,57 @@ async function loadPayroll() {
             payrollData[data.staffId].wages += (parseFloat(data.wageEarned) || 0);
         });
 
+        currentPayrollPayments = {};
+        try {
+            const paymentSnap = await db.collection('users').doc(businessId)
+                .collection('salaryPayments')
+                .where('month', '==', monthVal)
+                .get();
+            paymentSnap.forEach(doc => {
+                const p = doc.data();
+                if (!p.staffId) return;
+                currentPayrollPayments[p.staffId] = (currentPayrollPayments[p.staffId] || 0) + (Number(p.amount || 0));
+            });
+        } catch (e) {
+            console.warn('Salary payments not доступ allowed by rules', e);
+            // Continue without payment data when permissions are restricted.
+            currentPayrollPayments = {};
+        }
+
         tbody.innerHTML = '';
         let totalWages = 0;
+        let totalPaid = 0;
+        let totalBalance = 0;
         currentPayrollData = [];
 
         if (Object.keys(payrollData).length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No attendance data for this month</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No attendance data for this month</td></tr>';
         } else {
             Object.values(payrollData).forEach(p => {
                 currentPayrollData.push(p);
                 totalWages += p.wages;
                 const escape = (str) => (str || '').replace(/'/g, "\\'");
+                                const paid = currentPayrollPayments[p.staffId] || 0;
+                const balance = Math.max(0, p.wages - paid);
+                totalPaid += paid;
+                totalBalance += balance;
+                const status = paid >= p.wages && p.wages > 0
+                    ? '<span class="badge bg-success">Paid</span>'
+                    : paid > 0
+                        ? '<span class="badge bg-warning text-dark">Partial</span>'
+                        : '<span class="badge bg-secondary">Unpaid</span>';
                 tbody.innerHTML += `<tr>
                     <td>${p.name}</td>
                     <td>${p.role}</td>
                     <td>${p.days}</td>
-                    <td class="fw-bold">₹${p.wages.toLocaleString()}</td>
+                    <td class="fw-bold">\u20B9${p.wages.toLocaleString()}</td>
+                    <td>\u20B9${paid.toLocaleString()}</td>
+                    <td>\u20B9${balance.toLocaleString()}</td>
+                    <td>${status}</td>
                     <td>
+                        <button class="btn btn-sm btn-outline-success me-1" onclick="window.openSalaryPaymentModal('${p.staffId}', '${escape(p.name)}', '${escape(p.role)}', ${p.wages})">
+                            <i class="fas fa-hand-holding-usd"></i> Pay
+                        </button>
                         <button class="btn btn-sm btn-outline-primary" onclick="window.generatePayslip('${p.staffId}', '${escape(p.name)}', '${p.role}', ${p.days}, ${p.wages})">
                             <i class="fas fa-file-invoice"></i> Payslip
                         </button>
@@ -500,13 +554,145 @@ async function loadPayroll() {
             });
         }
         
-        document.getElementById('payrollTotalWages').textContent = `₹${totalWages.toLocaleString()}`;
+        document.getElementById('payrollTotalWages').textContent = `\u20B9${totalWages.toLocaleString()}`;
+        const paidEl = document.getElementById('payrollTotalPaid');
+        const balEl = document.getElementById('payrollTotalBalance');
+        if (paidEl) paidEl.textContent = `\u20B9${totalPaid.toLocaleString()}`;
+        if (balEl) balEl.textContent = `\u20B9${totalBalance.toLocaleString()}`;
 
     } catch (error) {
         console.error("Error loading payroll", error);
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error loading payroll</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error loading payroll</td></tr>';
     }
     applyPayrollFilters();
+}
+
+function populateSalaryStaffOptions(preselectId = '') {
+    if (!salaryStaffSelect) return;
+    salaryStaffSelect.innerHTML = '<option value="">Select Staff</option>';
+
+    const source = currentPayrollData.length ? currentPayrollData : staffListCache;
+    source.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.staffId || s.id || '';
+        opt.textContent = s.name || 'Staff';
+        opt.dataset.name = s.name || '';
+        opt.dataset.role = s.role || '';
+        opt.dataset.wages = Number(s.wages || s.amount || s.dailyWage || 0);
+        if (opt.value) salaryStaffSelect.appendChild(opt);
+    });
+
+    if (preselectId) {
+        salaryStaffSelect.value = preselectId;
+    }
+}
+
+function updateSalaryPaymentFields() {
+    if (!salaryStaffSelect) return;
+    const staffId = salaryStaffSelect.value;
+    if (!staffId) return;
+    const entry = currentPayrollData.find(p => p.staffId === staffId);
+    const wages = entry ? Number(entry.wages || 0) : Number(salaryStaffSelect.selectedOptions[0]?.dataset?.wages || 0);
+    const paid = currentPayrollPayments[staffId] || 0;
+    const balance = Math.max(0, wages - paid);
+    if (salaryPayable) salaryPayable.value = balance ? balance : wages;
+    if (salaryAmount) {
+        const currentVal = Number(salaryAmount.value || 0);
+        if (!currentVal || currentVal > balance) {
+            salaryAmount.value = balance ? balance : wages;
+        }
+    }
+}
+
+window.openSalaryPaymentModal = (staffId = '', staffName = '', role = '', wages = 0) => {
+    if (!salaryPaymentModal) return;
+    populateSalaryStaffOptions(staffId);
+
+    if (salaryMonth) {
+        salaryMonth.value = currentPayrollMonth || payrollMonthFilter?.value || '';
+    }
+    if (salaryDate) {
+        salaryDate.valueAsDate = new Date();
+    }
+    if (salaryStaffSelect && staffId) {
+        salaryStaffSelect.value = staffId;
+    }
+    if (salaryPayable) {
+        const paid = currentPayrollPayments[staffId] || 0;
+        const balance = Math.max(0, Number(wages || 0) - paid);
+        salaryPayable.value = balance ? balance : Number(wages || 0);
+    }
+    if (salaryAmount) {
+        salaryAmount.value = salaryPayable?.value || Number(wages || 0);
+    }
+    updateSalaryPaymentFields();
+
+    const modal = bootstrap.Modal.getOrCreateInstance(salaryPaymentModal);
+    modal.show();
+};
+
+async function saveSalaryPayment() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+    const businessId = user.businessId || user.uid;
+
+    const staffId = salaryStaffSelect?.value || '';
+    const staffOpt = salaryStaffSelect?.selectedOptions?.[0];
+    const staffName = staffOpt?.dataset?.name || staffOpt?.textContent || '';
+    const role = staffOpt?.dataset?.role || '';
+    const monthVal = salaryMonth?.value || currentPayrollMonth || '';
+    const amount = parseFloat(salaryAmount?.value || '0') || 0;
+    const payable = parseFloat(salaryPayable?.value || '0') || 0;
+    const dateVal = salaryDate?.value || '';
+    const mode = salaryMode?.value || 'Cash';
+    const reference = salaryReference?.value || '';
+    const notes = salaryNotes?.value || '';
+
+    if (!staffId || !monthVal || !dateVal || amount <= 0) {
+        return showAlert('warning', 'Please fill all required fields.');
+    }
+    if (payable && amount > payable) {
+        return showAlert('warning', 'Payment amount exceeds balance.');
+    }
+
+    const paymentData = {
+        staffId,
+        staffName,
+        role,
+        month: monthVal,
+        amount,
+        date: new Date(dateVal),
+        mode,
+        reference,
+        notes,
+        createdAt: new Date()
+    };
+
+    try {
+        await db.collection('users').doc(businessId).collection('salaryPayments').add(paymentData);
+        await db.collection('users').doc(businessId).collection('transactions').add({
+            type: 'Salary Payment',
+            description: `Salary payment for ${staffName} (${monthVal})`,
+            staffId,
+            staffName,
+            role,
+            amount,
+            date: new Date(dateVal),
+            mode,
+            reference,
+            month: monthVal,
+            status: 'Paid',
+            createdAt: new Date()
+        });
+
+        if (salaryPaymentForm) salaryPaymentForm.reset();
+        bootstrap.Modal.getOrCreateInstance(salaryPaymentModal).hide();
+        showAlert('success', 'Salary payment recorded.');
+        loadPayroll();
+    } catch (e) {
+        console.error('Salary payment failed', e);
+        showAlert('danger', 'Failed to record salary payment.');
+    }
 }
 
 function openManualAttendanceModal() {
@@ -707,6 +893,13 @@ window.generatePayslip = async (staffId, staffName, role, daysPresent, totalWage
     const doc = new jsPDF();
     const user = JSON.parse(localStorage.getItem('user'));
     const businessId = user.businessId || user.uid;
+    const brand = {
+        primary: [30, 107, 138],   // #1e6b8a (invoice palette)
+        light: [242, 248, 250],
+        border: [220, 228, 232],
+        text: [17, 17, 17],
+        muted: [90, 90, 90]
+    };
 
     // Fetch Company Details
     let company = { companyName: 'My Company', address: '', phone: '', email: '' };
@@ -720,79 +913,97 @@ window.generatePayslip = async (staffId, staffName, role, daysPresent, totalWage
     const dateObj = new Date(year, month - 1);
     const monthName = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-    // Header
-    doc.setFontSize(20);
-    doc.setTextColor(40, 40, 40);
-    doc.text(company.companyName || 'Company Name', 105, 20, { align: 'center' });
-
+    // Header Band
+    doc.setFillColor(...brand.primary);
+    doc.rect(10, 10, 190, 24, 'F');
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text(company.companyName || 'Company Name', 15, 25);
     doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text(company.address || '', 105, 26, { align: 'center' });
-    doc.text(`Phone: ${company.phone || '-'} | Email: ${company.email || '-'}`, 105, 31, { align: 'center' });
+    doc.text('PAYSLIP', 185, 25, { align: 'right' });
 
-    doc.setLineWidth(0.5);
-    doc.setDrawColor(200, 200, 200);
-    doc.line(15, 35, 195, 35);
+    // Company Logo
+    if (company.logoUrl) {
+        try {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = company.logoUrl;
+            await new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+            if (img.width && img.height) {
+                const maxW = 26;
+                const maxH = 18;
+                const ratio = Math.min(maxW / img.width, maxH / img.height);
+                const w = img.width * ratio;
+                const h = img.height * ratio;
+                doc.addImage(img, 'PNG', 168, 13, w, h);
+            }
+        } catch (e) {
+            console.warn('Logo load failed', e);
+        }
+    }
 
-    // Title
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`PAYSLIP`, 105, 45, { align: 'center' });
+    // Company Details
+    doc.setFontSize(9);
+    doc.setTextColor(...brand.muted);
+    const addrLine = company.address ? company.address : '';
+    const contactLine = `Phone: ${company.phone || '-'} | Email: ${company.email || '-'}`;
+    doc.text(addrLine, 15, 40);
+    doc.text(contactLine, 15, 45);
+
+    // Period Badge
+    doc.setFillColor(...brand.light);
+    doc.setDrawColor(...brand.border);
+    doc.rect(10, 50, 190, 12, 'FD');
     doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Period: ${monthName}`, 105, 50, { align: 'center' });
+    doc.setTextColor(...brand.text);
+    doc.text(`Period: ${monthName}`, 15, 58);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 185, 58, { align: 'right' });
 
     // Employee Details Box
-    doc.setFillColor(248, 249, 250);
-    doc.rect(15, 55, 180, 25, 'F');
+    doc.setFillColor(...brand.light);
+    doc.setDrawColor(...brand.border);
+    doc.rect(10, 66, 190, 26, 'FD');
     
     doc.setFontSize(10);
-    doc.setTextColor(50);
-    doc.text("Employee Name:", 20, 65);
-    doc.setTextColor(0);
-    doc.text(staffName, 55, 65);
+    doc.setTextColor(...brand.muted);
+    doc.text("Employee Name:", 15, 77);
+    doc.setTextColor(...brand.text);
+    doc.text(staffName, 55, 77);
 
-    doc.setTextColor(50);
-    doc.text("Role:", 20, 72);
-    doc.setTextColor(0);
-    doc.text(role, 55, 72);
+    doc.setTextColor(...brand.muted);
+    doc.text("Role:", 15, 85);
+    doc.setTextColor(...brand.text);
+    doc.text(role, 55, 85);
 
-    doc.setTextColor(50);
-    doc.text("Generated On:", 110, 65);
-    doc.setTextColor(0);
-    doc.text(new Date().toLocaleDateString(), 140, 65);
+    // Staff ID removed
 
     // Earnings Table
     doc.autoTable({
-        startY: 85,
+        startY: 98,
         head: [['Description', 'Details', 'Amount (INR)']],
         body: [
             ['Basic Wages', 'Calculated based on attendance', totalWages.toLocaleString()],
             ['Days Worked', `${daysPresent} Days`, '-'],
         ],
         theme: 'grid',
-        headStyles: { fillColor: [50, 50, 50], textColor: 255 },
+        styles: { lineColor: brand.border, textColor: brand.text },
+        headStyles: { fillColor: brand.primary, textColor: 255 },
         columnStyles: { 
             0: { cellWidth: 80 },
             2: { halign: 'right', fontStyle: 'bold' }
         },
         foot: [['Net Payable', '', `Rs. ${totalWages.toLocaleString()}`]],
-        footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', halign: 'right' }
+        footStyles: { fillColor: brand.light, textColor: brand.text, fontStyle: 'bold', halign: 'right' }
     });
 
-    // Footer Signatures
-    const finalY = doc.lastAutoTable.finalY + 40;
-    
-    doc.setLineWidth(0.5);
-    doc.line(20, finalY, 70, finalY);
-    doc.text("Employee Signature", 25, finalY + 5);
-
-    doc.line(140, finalY, 190, finalY);
-    doc.text("Employer Signature", 145, finalY + 5);
-
+    // Footer Note
+    const finalY = doc.lastAutoTable.finalY + 18;
     doc.setFontSize(8);
-    doc.setTextColor(150);
-    doc.text("Generated by SSPC", 105, 280, { align: 'center' });
+    doc.setTextColor(...brand.muted);
+    doc.text("This is a computer generated payslip.", 105, finalY, { align: 'center' });
 
     doc.save(`Payslip_${staffName.replace(/\s+/g, '_')}_${monthName}.pdf`);
 };
@@ -1135,4 +1346,3 @@ window.printQR = async () => {
     win.document.write(html);
     win.document.close();
 };
-
