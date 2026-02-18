@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sspc-v1.0.8';
+const CACHE_VERSION = 'sspc-v1.0.9';
 const OFFLINE_URL = 'offline.html';
 
 const APP_SHELL = [
@@ -106,4 +106,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
